@@ -31,6 +31,21 @@ All *on vehicule* themes | e.g. Paris BUS Theme
 
 *Only at major theme updates the images will change*
 
+## Attributions :
+
+Transport data by *Transitous*:
+
+(*Wouldn't be possible without them*)
+
+https://transitous.org/sources/
+
+Support them: https://transitous.org/donate/
+
+Transitous uses OpenStreetMap for geo data:
+
+https://www.openstreetmap.org/copyright 
+
+## 
 
 *(README fully human written)*
 
