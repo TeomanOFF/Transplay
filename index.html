@@ -6,6 +6,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#010402">
 <title>Transplay — Live Station & Vehicle Displays</title>
+<meta name="description" content="Transplay — live station departure boards and onboard vehicle next-stop displays with 20+ themes, powered by real Transitous data.">
+<meta name="author" content="TeomanOFF">
+<!-- Open Graph / Twitter (place a 1200×630 og-cover.png at the repo root for the preview image) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Transplay">
+<meta property="og:title" content="Transplay — Live Station & Vehicle Displays">
+<meta property="og:description" content="Live departure boards and onboard next-stop displays with 20+ themes, powered by real Transitous data.">
+<meta property="og:url" content="https://github.com/TeomanOFF/Transplay">
+<meta property="og:image" content="https://raw.githubusercontent.com/TeomanOFF/Transplay/main/og-cover.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Transplay — Live Station & Vehicle Displays">
+<meta name="twitter:description" content="Live departure boards and onboard next-stop displays with 20+ themes, powered by real Transitous data.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/TeomanOFF/Transplay/main/og-cover.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Transplay">
+<!-- Inline SVG favicon (offline, no CDN) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a100d'/%3E%3Ccircle cx='22' cy='22' r='8' fill='%238fdb9b'/%3E%3Cpath d='M34 16l10 8-10 8' fill='none' stroke='%238fdb9b' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14 46h36' stroke='%23ffb000' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 <!-- Fully offline: icons are an inline SVG sprite (ICONS + hydrateIcons); type uses system stacks. -->
 <style>
 :root{--md-primary:#8fdb9b;--md-on-primary:#00391c;--md-primary-container:#0f5132;--md-on-primary-container:#a9f2b4;--md-secondary-container:#334b39;--md-on-secondary-container:#d3e8d2;--md-tertiary-container:#1e4d52;--md-on-tertiary-container:#bcebf0;--md-error-container:#93000a;--md-warning:#ffb95c;--md-surface:#0e1512;--md-surface-dim:#0a100d;--md-sc-low:#16201b;--md-sc:#1a241e;--md-sc-high:#222d26;--md-sc-highest:#2b362e;--md-on-surface:#dfe5dd;--md-on-surface-var:#a8b5ab;--md-outline:#3c4a41;--md-outline-var:#26322b;--md-scrim:rgba(0,0,0,.62);--stage-bg:#010402;--font:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--mono:'Doto',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--term:'VT323',ui-monospace,Menlo,Consolas,monospace;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px);--easing:cubic-bezier(.2,0,0,1)}
@@ -43,7 +62,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 #fab-cluster.revealed{opacity:1;pointer-events:auto;transform:none}
 .m3-fab{width:52px;height:52px;border-radius:16px;background:var(--md-sc-highest);color:var(--md-primary);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .m3-fab .msr{font-size:24px;width:24px;height:24px}
-#fullscreen-fab.is-fs{background:var(--md-primary-container);color:var(--md-on-primary-container)}
+#fullscreen-fab.is-fs,#pip-fab.is-pip{background:var(--md-primary-container);color:var(--md-on-primary-container)}
 #fullscreen-fab .fs-compress{display:none}#fullscreen-fab.is-fs .fs-expand{display:none}#fullscreen-fab.is-fs .fs-compress{display:inline-flex}
 #display-footer{position:absolute;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px calc(16px + var(--sar)) calc(8px + var(--sab)) calc(16px + var(--sal));font-size:11.5px;color:color-mix(in srgb,var(--md-on-surface) 55%,transparent);opacity:0;visibility:hidden;transition:.25s}
 #display-footer.revealed{opacity:1;visibility:visible}
@@ -257,7 +276,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 .fin-line{font-size:18px;font-weight:800;background:var(--fc);color:#0b0f14;padding:6px 18px;border-radius:999px}
 @media(max-width:980px){.main-grid{grid-template-columns:1fr}}
 @media(min-width:981px) and (min-height:620px){.side-col{position:sticky;top:76px}}
-@media(max-width:640px){.settings-header{flex-wrap:wrap;gap:8px}.m3-tabs{margin-left:0;width:100%;order:3}.m3-tab{flex:1;justify-content:center;padding:0 8px}.m3-tab .tab-label{display:none}.m3-card{padding:16px}.attr-full{display:none}.attr-short{display:inline}.m3-fab{width:48px;height:48px}.mode-seg{grid-template-columns:1fr}}
+@media(max-width:640px){.settings-header{flex-wrap:wrap;gap:8px}.m3-tabs{margin-left:0;width:100%;order:3}.m3-tab{flex:1;justify-content:center;padding:0 8px}.m3-tab .tab-label{display:none}.m3-card{padding:16px}.attr-full{display:none}.attr-short{display:inline}.m3-fab{width:48px;height:48px}.m3-fab .msr{font-size:22px;width:22px;height:22px}.mode-seg{grid-template-columns:1fr}}
 @media(max-width:400px){.mode-grid{grid-template-columns:1fr}.mode-card{flex-direction:row;align-items:center;min-height:0}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -273,6 +292,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 <div class="stage-overlay" id="overlay-welcome" hidden><div class="overlay-card"><span class="msr ov-icon" data-icon="departure_board"></span><h2>Welcome to Transplay</h2><p>Live station &amp; onboard vehicle displays powered by real Transitous data.</p><div class="overlay-actions"><button class="m3-btn m3-filled" id="welcome-settings-btn"><span class="msr" data-icon="tune"></span>Set up display</button></div></div></div>
 </div>
 <div id="fab-cluster">
+<button id="pip-fab" class="m3-fab" aria-label="Picture in picture" tabindex="-1"><span class="msr" data-icon="picture_in_picture"></span></button>
 <button id="fullscreen-fab" class="m3-fab" aria-label="Toggle fullscreen" tabindex="-1"><span class="msr fs-expand" data-icon="fullscreen"></span><span class="msr fs-compress" data-icon="fullscreen_exit"></span></button>
 <button id="settings-fab" class="m3-fab" aria-label="Open settings" tabindex="-1"><span class="msr" data-icon="settings"></span></button>
 </div>
@@ -322,7 +342,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 <div class="tp-row"><span class="tp-m">M</span><span class="tp-dest">Airport</span><span class="tp-min">12 min</span></div>
 </div><div class="tp-divider"></div><span class="msr tp-train" data-icon="train"></span><div class="tp-name">TRANSPLAY</div></div>
 <div class="infos-name">Transplay</div>
-<span class="infos-ver"><span class="msr" data-icon="tag"></span>Current version&nbsp;<b id="infos-version">v10</b></span>
+<span class="infos-ver"><span class="msr" data-icon="tag"></span>Current version&nbsp;<b id="infos-version">v10.1</b></span>
 <p class="infos-tag">Live station &amp; onboard vehicle displays · Material 3 · powered by real Transitous data.</p>
 <div class="infos-actions">
 <button class="m3-btn m3-filled" id="credits-btn"><span class="msr" data-icon="favorite"></span>Credits</button>
@@ -356,6 +376,7 @@ arrow_back:'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
 arrow_forward:'M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z',
 fullscreen:'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z',
 fullscreen_exit:'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z',
+picture_in_picture:'M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM19 7h-8v6h8V7z',
 settings:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
 tune:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
 info:'M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z',
@@ -381,21 +402,18 @@ flag:'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z',
 format_color_fill:'M16.56 8.94L7.62 0 6.21 1.41l2.12 2.12L2.56 9.3c-.78.78-.78 2.05 0 2.83l2.83 2.83c.78.78 2.05.78 2.83 0l5.77-5.77 2.12 2.12 1.41-1.41-2.12-2.12 1.16-1.16-2.12-2.12zM3.5 20.5h17V22h-17z',
 preview:'M12 5.5C7 5.5 2.73 8.61 1 13c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6.5c-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5z',
 sync_alt:'M22 8l-4-4v3H3v2h15v3l4-4zM2 16l4 4v-3h15v-2H6v-3l-4 4z',
-north:'M5 9l1.41 1.41L11 5.83V22h2V5.83l4.59 4.59L19 9l-7-7-7 7z',
-south:'M15 15l-1.41-1.41L9 18.17V2H7v16.17l-4.59-4.59L1 15l7 7 7-7z',
-signpost:'M3 5h14l4 3-4 3H3V5zm4 8h2v8H7v-8z',
 map:'M20.5 3l-.16.03L15 5 10 3 3 5v15.5l.5.17L10 19l5 2 6-2V3l-.5-.17zM15 19l-5-2V6.5l5 2V19z',
 tag:'M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z',
 category:'M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z',
 route:'M19 15.18V7c0-2.21-1.79-4-4-4s-4 1.79-4 4v10c0 1.1-.9 2-2 2s-2-.9-2-2V8.82C8.16 8.4 9 7.3 9 6c0-1.66-1.34-3-3-3S3 4.34 3 6c0 1.3.84 2.4 2 2.82V17c0 2.21 1.79 4 4 4s4-1.79 4-4V7c0-1.1.9-2 2-2s2 .9 2 2v8.18c-1.16.42-2 1.52-2 2.82 0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.3-.84-2.4-2-2.82z',
 swap_horiz:'M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z',
-event_busy:'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11zm-8.5-3.5l-1.5-1.5-1.5 1.5-1-1 1.5-1.5-1.5-1.5 1-1 1.5 1.5 1.5-1.5 1 1-1.5 1.5 1.5 1.5-1 1z',
+event_busy:'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z',
 cloud_off:'M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 6.23 11.08 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5h.5c1.63 0 3 1.37 3 3 0 .53-.14 1.03-.39 1.46l1.42 1.42c.6-.81.97-1.8.97-2.88 0-2.6-1.9-4.76-4.65-4.96zM3 5.27l2.75 2.74C2.56 8.15 0 10.77 0 14c0 3.31 2.69 6 6 6h11.73l2 2L21 20.73 4.27 4 3 5.27zM7.73 10l8 8H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h1.73z',
 my_location:'M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'
 };
 function hydrateIcons(scope){(scope||document).querySelectorAll('.msr').forEach(sp=>{const n=(sp.dataset.icon||'').trim();if(!n||sp.dataset.ic===n)return;const p=ICONS[n];if(p){sp.dataset.ic=n;sp.textContent='';sp.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+p+'"/></svg>');}});}
 new MutationObserver(muts=>{for(const m of muts){if(m.addedNodes)for(const n of m.addedNodes){if(n.nodeType===1){if(n.classList&&n.classList.contains('msr'))hydrateIcons(n.parentElement||n);else if(n.querySelectorAll)hydrateIcons(n);}}}}).observe(document.body,{childList:true,subtree:true});
-const APP_VERSION='v10';
+const APP_VERSION='v10.1';
 const API_HEADERS=Object.freeze({'Accept':'application/json','X-Name':'Transplay','X-Mail':'teoman.trsw@atomicmail.io','X-Version':APP_VERSION});
 const CONFIG=Object.freeze({API_BASE:'https://api.transitous.org/api/',REFRESH_MS:60000,TICK_MS:1000,SEARCH_DEBOUNCE_MS:350,SEARCH_MIN_CHARS:2,REQUEST_TIMEOUT_MS:12000,GEOCODE_TTL:600000,OVERVIEW_TTL:300000,TRIP_TTL:55000,OVERVIEW_COUNT:100,OVERVIEW_MAX_PAGES:2,DEPARTURE_COUNT:100,MAX_DEPS:14,EXPIRE_GRACE_MS:60000,DUE_S:45,FAB_HIDE_MS:4200,STORAGE_KEY:'transplay.v10',HINT_KEY:'transplay.hint.v10',DEFAULT_BG:'#010402',BG_SWATCHES:['#010402','#020806','#05070c','#0a0a0b','#0b1220','#140b1e','#0e1512','#1a1408'],DEFAULT_STATION:Object.freeze({id:'fr-reseau-urbain-et-interurbain-dile-de-france-mobilites_IDFM:71264',name:'Châtelet',tz:'Europe/Paris',country:'FR'})});
 /* Stable theme-id table for compact sharing: APPEND new ids only (never reorder). */
@@ -483,9 +501,11 @@ const d=Object.assign({},data,{lines:data.lines||(data.line?[data.line]:[]),dest
 const fin=theme.mode==='vehicle'&&d.finished;const W=fin?1280:theme.designWidth,Hh=fin?640:theme.designHeight;
 const fit=document.createElement('div');fit.className='board-fit';const sc=document.createElement('div');sc.className='board-scaler';sc.style.width=W+'px';sc.style.height=Hh+'px';
 sc.innerHTML=fin?finishedBoard(d,H):theme.render(d,H);fit.appendChild(sc);container.appendChild(fit);hydrateIcons(sc);
-const handle={root:sc,theme,data:d,container,observer:null,destroy(){if(handle.observer)handle.observer.disconnect();container.innerHTML='';}};
-function fitNow(){const cs=getComputedStyle(container);const px=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);const py=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);const cw=container.clientWidth-px,ch=container.clientHeight-py;if(cw<=0)return;let s;if(fitMode==='contain')s=Math.min(cw/W,(ch>0?ch:1e9)/Hh);else{s=cw/W;container.style.height=Math.round(Hh*s+py)+'px';}s=Math.max(.02,s);fit.style.width=Math.round(W*s)+'px';fit.style.height=Math.round(Hh*s)+'px';sc.style.transform='scale('+s+')';}
-fitNow();if(typeof ResizeObserver!=='undefined'){handle.observer=new ResizeObserver(fitNow);handle.observer.observe(container);}return handle;}
+const handle={root:sc,theme,data:d,container,observer:null,offResize:null,destroy(){if(handle.observer)handle.observer.disconnect();if(handle.offResize)handle.offResize();container.innerHTML='';}};
+function fitNow(){const cs=(container.ownerDocument.defaultView||window).getComputedStyle(container);const px=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);const py=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);const cw=container.clientWidth-px,ch=container.clientHeight-py;if(cw<=0)return;let s;if(fitMode==='contain')s=Math.min(cw/W,(ch>0?ch:1e9)/Hh);else{s=cw/W;container.style.height=Math.round(Hh*s+py)+'px';}s=Math.max(.02,s);fit.style.width=Math.round(W*s)+'px';fit.style.height=Math.round(Hh*s)+'px';sc.style.transform='scale('+s+')';}
+fitNow();const win=container.ownerDocument.defaultView||window;win.addEventListener('resize',fitNow);handle.offResize=()=>win.removeEventListener('resize',fitNow);
+const RO=win.ResizeObserver;if(RO){handle.observer=new RO(fitNow);handle.observer.observe(container);}
+return handle;}
 function activeTheme(){return Themes.get(State.mode==='vehicle'?State.themeVehicle:State.themeStation)||Themes.first(State.mode);}
 return{mount,activeTheme};})();
 const H={
@@ -708,6 +728,82 @@ buildVehicleData(){const t=State.vehicle;if(!t)return null;const now=Date.now();
 vehicleCandidates(){const lk=new Set(State.selectedLineKeys),ds=new Set(State.selectedDestinations),seen=new Set(),out=[];for(const d of State.rawDepartures){if(!lk.has(d.line.key))continue;if(ds.size&&!ds.has(d.destination))continue;if(!d.tripId||seen.has(d.tripId))continue;seen.add(d.tripId);out.push(d);if(out.length>=8)break;}return out;},
 hasExpired(){const now=Date.now();return State.departures.some(d=>d.expectedTime<now-CONFIG.EXPIRE_GRACE_MS);}
 };
+/* ============ PICTURE-IN-PICTURE ============
+   Desktop (Chromium): Document PiP — the real themed board is moved into a floating window.
+   Android / other: Document PiP is unavailable, so we fall back to VIDEO PiP — a canvas is
+   drawn with a compact live board, streamed via captureStream() into a muted <video>, which
+   enters the system PiP window. Works with the user-gesture tap on the PiP button. */
+const Pip={win:null,handle:null,box:null,vid:null,cvs:null,ctx:null,stream:null,drawTimer:null,active:false,
+fab(){const f=document.getElementById('pip-fab');if(f)f.classList.toggle('is-pip',this.active);},
+onClose(){if(this.drawTimer){clearInterval(this.drawTimer);this.drawTimer=null;}if(this.stream){this.stream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});this.stream=null;}if(this.vid){try{this.vid.pause();}catch(e){}this.vid.remove();this.vid=null;}this.win=null;this.handle=null;this.box=null;this.active=false;this.fab();},
+async toggle(){if(this.active){this.closeAll();return;}
+if(window.documentPictureInPicture){try{await this.openDoc();return;}catch(e){}}
+if(document.pictureInPictureEnabled&&HTMLVideoElement.prototype.requestPictureInPicture){try{await this.openVideo();return;}catch(e){U.toast('PiP failed: '+(e&&e.message||e),'warn');return;}}
+U.toast('Picture-in-Picture is not supported in this browser','warn');},
+async openDoc(){const theme=ThemeMgr.activeTheme();const ar=theme?theme.designWidth/theme.designHeight:2;const w=Math.min(720,Math.max(360,Math.round((window.screen?window.screen.width:1280)*0.42)));
+const win=await window.documentPictureInPicture.requestWindow({width:w,height:Math.round(w/ar)});this.win=win;this.active=true;this.fab();
+const doc=win.document;doc.title='Transplay · PiP';
+document.querySelectorAll('style').forEach(s=>doc.head.appendChild(s.cloneNode(true)));
+doc.body.style.cssText='margin:0;background:'+State.bg+';overflow:hidden;height:100vh';
+this.box=doc.createElement('div');this.box.style.cssText='position:fixed;inset:0;padding:10px';doc.body.appendChild(this.box);
+win.addEventListener('pagehide',()=>this.onClose());
+win.addEventListener('resize',U.debounce(()=>this.mountDoc(),200));
+this.mountDoc();U.toast('Picture-in-Picture opened','success');},
+mountDoc(){if(!this.win||this.win.closed||!this.box)return;if(this.handle){this.handle.destroy();this.handle=null;}const theme=ThemeMgr.activeTheme();if(!theme)return;const data=State.mode==='vehicle'?Data.buildVehicleData():Data.buildStationData();if(!data)return;this.handle=ThemeMgr.mount(this.box,theme,data,'contain');hydrateIcons(this.box);},
+async openVideo(){this.cvs=document.createElement('canvas');this.cvs.width=1280;this.cvs.height=720;this.ctx=this.cvs.getContext('2d');this.drawCanvas();
+this.stream=this.cvs.captureStream(5);
+const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.srcObject=this.stream;
+v.style.cssText='position:fixed;top:0;left:0;width:2px;height:1px;opacity:.01;pointer-events:none;z-index:-1';document.body.appendChild(v);this.vid=v;
+v.addEventListener('leavepictureinpicture',()=>this.onClose(),{once:true});
+await v.play();await v.requestPictureInPicture();
+this.drawTimer=setInterval(()=>this.drawCanvas(),250);this.active=true;this.fab();U.toast('Picture-in-Picture opened','success');},
+trunc(c,t,max){t=String(t||'');if(c.measureText(t).width<=max)return t;let s=t;while(s.length&&c.measureText(s+'…').width>max)s=s.slice(0,-1);return s+'…';},
+drawCanvas(){const c=this.ctx;if(!c)return;const W=1280,Hh=720;const isV=State.mode==='vehicle';
+let accent='#8fdb9b';
+if(isV&&State.vehicle&&State.vehicle.line&&State.vehicle.line.color)accent=State.vehicle.line.color;
+else{const l=State.selectedLineKeys.map(k=>State.lines.find(x=>x.key===k)).find(Boolean);if(l&&l.color)accent=l.color;}
+const tz=State.station&&State.station.tz;const F='system-ui,-apple-system,Roboto,Arial,sans-serif';
+c.fillStyle='#0b0f14';c.fillRect(0,0,W,Hh);
+c.textBaseline='middle';c.textAlign='left';c.fillStyle=accent;c.font='800 32px '+F;
+const title=isV?(State.vehicle?('Line '+(State.vehicle.line?State.vehicle.line.shortName:'')+' → '+State.vehicle.headsign):'Vehicle display'):(State.station?State.station.name:'Transplay');
+c.fillText(this.trunc(c,title,840),48,58);
+c.textAlign='right';c.fillStyle='#dfe5dd';c.font='700 32px '+F;c.fillText(U.fmtClock(new Date(),'hms',tz),W-48,58);
+c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=2;c.beginPath();c.moveTo(48,100);c.lineTo(W-48,100);c.stroke();
+if(isV)this.drawVeh(c,W,Hh,accent,tz,F);else this.drawStn(c,W,Hh,accent,tz,F);
+c.textAlign='left';c.fillStyle='#5c6a62';c.font='600 20px '+F;c.fillText('TRANSPLAY · data: Transitous',48,Hh-28);
+c.textAlign='right';c.fillStyle=State.lastRefreshFailed?'#ff8a80':'#8fdb9b';
+c.fillText(State.lastRefreshFailed?'OFFLINE':'LIVE · '+(State.lastUpdated?U.fmtClock(new Date(State.lastUpdated),'hms',tz):'--:--'),W-48,Hh-28);c.textAlign='left';},
+drawStn(c,W,Hh,accent,tz,F){const deps=State.departures.slice(0,4);
+if(!deps.length){c.textAlign='center';c.fillStyle='#8a94a8';c.font='600 38px '+F;c.fillText(State.station?'No upcoming departures':'Select a station in settings',W/2,Hh/2);c.textAlign='left';return;}
+const top=Math.min(120,(Hh-230)/deps.length);let y=130;
+deps.forEach((d,i)=>{const sec=Math.round((d.expectedTime-Date.now())/1000);
+const bg=(d.line&&d.line.color)||accent,fg=(d.line&&d.line.textColor)||U.contrastText(bg);
+c.beginPath();c.arc(92,y+top/2,36,0,Math.PI*2);c.fillStyle=bg;c.fill();
+c.fillStyle=fg;c.font='800 30px '+F;c.textAlign='center';c.fillText(this.trunc(c,d.line?d.line.shortName:'•',64),92,y+top/2+2);
+c.textAlign='left';c.fillStyle=i===0?'#ffffff':'#c6cdd4';c.font=(i===0?'800 46px ':'600 38px ')+F;
+c.fillText(this.trunc(c,d.destination,W-440),156,y+top/2-16);
+c.fillStyle='#8a94a8';c.font='500 24px '+F;
+c.fillText([U.fmtClock(new Date(d.expectedTime),'hm',tz),d.platform?'Pl '+d.platform:'',d.realtime?'● live':'○ sched'].join('  ·  '),156,y+top/2+28);
+c.textAlign='right';const due=sec<=CONFIG.DUE_S&&sec>-60;c.fillStyle=due?'#7fdca4':accent;c.font='800 '+(due?44:60)+'px '+F;
+c.fillText(due?'NOW':Math.max(0,Math.ceil(sec/60))+' min',W-48,y+top/2+4);
+c.textAlign='left';y+=top;});},
+drawVeh(c,W,Hh,accent,tz,F){const t=State.vehicle;
+if(!t){c.textAlign='center';c.fillStyle='#8a94a8';c.font='600 38px '+F;c.fillText('Select a vehicle in settings',W/2,Hh/2);c.textAlign='left';return;}
+const now=Date.now();let ci=t.stops.findIndex(s=>s.time!=null&&s.time>now-CFG_DUE());if(ci<0)ci=t.stops.length;const nx=t.stops[ci];
+c.textAlign='center';
+c.fillStyle='#8a94a8';c.font='800 24px '+F;c.fillText('NEXT STOP',W/2,170);
+c.fillStyle='#ffffff';c.font='800 76px '+F;c.fillText(this.trunc(c,nx?nx.name:'End of line',W-140),W/2,250);
+const sec=nx&&nx.time!=null?Math.round((nx.time-now)/1000):null;const due=sec!=null&&sec<=CFG.DUE()&&sec>-60;
+c.fillStyle=due?'#7fdca4':accent;c.font='800 '+(due?90:130)+'px '+F;
+c.fillText(sec==null?'—':(due?'NOW':Math.max(0,Math.ceil(sec/60))+' min'),W/2,420);
+const prog=t.stops.length?U.clamp(ci/t.stops.length,0,1):0;
+c.fillStyle='rgba(255,255,255,.12)';c.fillRect(W/2-300,520,600,14);
+c.fillStyle=accent;c.fillRect(W/2-300,520,600*prog,14);
+c.fillStyle='#8a94a8';c.font='600 28px '+F;
+c.fillText('→ '+this.trunc(c,t.headsign,W-260)+'   ·   '+Math.max(0,t.stops.length-ci)+' stops left',W/2,580);
+c.textAlign='left';}
+};
+function CFG_DUE(){return CONFIG.DUE_S;}
 /* ============ DISPLAY ============ */
 const Display={handle:null,depIndex:new Map(),els:{},lastSig:'',
 init(){const g=id=>document.getElementById(id);this.els={area:g('board-area'),loading:g('overlay-loading'),error:g('overlay-error'),empty:g('overlay-empty'),vehicle:g('overlay-vehicle'),welcome:g('overlay-welcome'),errorMsg:g('error-msg'),emptyMsg:g('empty-msg'),statusDot:g('status-dot'),statusText:g('status-text'),footer:g('display-footer')};},
@@ -717,9 +813,9 @@ const sw=!State.station,sl=!!State.station&&(State.overviewLoading&&!State.rawDe
 this.els.welcome.hidden=!sw;this.els.loading.hidden=!sl;this.els.error.hidden=!se;this.els.empty.hidden=!sem;this.els.vehicle.hidden=!sv;
 if(se)this.els.errorMsg.textContent='Transitous says: '+State.departuresError;
 if(sem)this.els.emptyMsg.textContent=!State.selectedLineKeys.length?'No lines on this sign yet.':(State.rawDepartures.length?'No services match soon.':'No upcoming departures right now.');
-this.updateFooter();this.tick(true);},
+this.updateFooter();if(Pip.active&&Pip.win&&!Pip.win.closed)Pip.mountDoc();this.tick(true);},
 updateFooter(){const d=this.els.statusDot,t=this.els.statusText;if(!State.station){d.className='status-dot';t.textContent='Not configured';return;}if(State.lastRefreshFailed){d.className='status-dot err';t.textContent='Offline · last '+(State.lastUpdated?U.fmtClock(new Date(State.lastUpdated),'hms',State.station.tz):'—');return;}if(!State.lastUpdated){d.className='status-dot';t.textContent='Waiting…';return;}const isV=State.mode==='vehicle';const rt=isV?(State.vehicle&&State.vehicle.realtime):State.departures.some(x=>x.realtime);d.className='status-dot '+(rt?'live':'sch');t.textContent=(rt?'Live · ':'Sched · ')+(isV?'vehicle':State.selectedLineKeys.length+' lines')+' · '+U.fmtClock(new Date(State.lastUpdated),'hms',State.station.tz);},
-tick(force){const theme=ThemeMgr.activeTheme();if(!theme)return;const tg=[];if(this.handle)tg.push(this.handle);if(Settings.previewHandle&&State.page==='settings')tg.push(Settings.previewHandle);const now=new Date();
+tick(force){const theme=ThemeMgr.activeTheme();if(!theme)return;const tg=[];if(this.handle)tg.push(this.handle);if(Pip.handle)tg.push(Pip.handle);if(Settings.previewHandle&&State.page==='settings')tg.push(Settings.previewHandle);const now=new Date();
 for(const hd of tg){const d=hd.data,smp=d&&d.meta&&d.meta.sample,tz=d&&d.station?d.station.tz:null;
 hd.root.querySelectorAll('[data-live="clock"]').forEach(n=>n.textContent=theme.formatClock(now,n.dataset.fmt,tz));
 hd.root.querySelectorAll('[data-live="countdown"]').forEach(n=>{let dep=this.depIndex.get(n.dataset.uid);if(!dep&&d&&d.departures)dep=d.departures.find(x=>x.uid===n.dataset.uid);if(!dep)return;const sec=smp&&dep.fixedCountdown!=null?dep.fixedCountdown:Math.round((dep.expectedTime-Date.now())/1000);const tx=theme.formatCountdown(dep,sec,n.dataset.variant||'main');if(n.textContent!==tx)n.textContent=tx;const st=theme.countdownState(dep,sec);if(n.dataset.state!==st)n.dataset.state=st;});
@@ -799,7 +895,7 @@ renderBg(){this.els.bgHexPill.textContent=State.bg.toUpperCase();this.els.bgSwat
 renderThemeCards(){this.destroyCards();const th=Themes.list(State.mode);this.els.themesIntro.textContent=(State.mode==='vehicle'?'Vehicle':'Station')+' themes — previews use sample data.';this.els.themesGrid.innerHTML=th.map(t=>'<button class="theme-card'+((State.mode==='vehicle'?State.themeVehicle:State.themeStation)===t.id?' selected':'')+'" data-theme="'+t.id+'"><div class="theme-card-preview" data-preview="'+t.id+'"><span class="sample-tag">SAMPLE</span></div><div class="theme-card-body"><div class="theme-card-name">'+U.esc(t.name)+'<span class="active-pill">ACTIVE</span></div><div class="theme-card-desc">'+U.esc(t.description)+'</div></div></button>').join('');th.forEach(t=>{const holder=this.els.themesGrid.querySelector('[data-preview="'+CSS.escape(t.id)+'"]');const handle=ThemeMgr.mount(holder,t,t.sample||{station:{name:'S'},line:null,departures:[],stops:[],alerts:[],meta:{sample:true}},'width');if(handle)this.cardHandles.push(handle);});this.els.themesGrid.querySelectorAll('.theme-card').forEach(c=>c.addEventListener('click',()=>App.setTheme(c.dataset.theme)));},
 destroyCards(){this.cardHandles.forEach(h=>h.destroy());this.cardHandles=[];},
 renderPreview(){const theme=ThemeMgr.activeTheme();if(!theme)return;const v=State.mode==='vehicle';let data,live=false;if(v){if(State.vehicle){data=Data.buildVehicleData();live=true;}else data=theme.sample;}else{if(State.rawDepartures.length){data=Data.buildStationData();live=true;}else data=theme.sample;}data=data||theme.sample;const sig=Display.sig(data,theme)+'#'+live;if(this.previewHandle&&sig===this.previewSig)return;this.previewSig=sig;if(this.previewHandle){this.previewHandle.destroy();this.previewHandle=null;}this.previewHandle=ThemeMgr.mount(this.els.preview,theme,data,'width');const tag=document.createElement('span');tag.className='preview-live '+(live?'on':'off');tag.innerHTML=live?'<i></i>LIVE':'SAMPLE';this.els.preview.appendChild(tag);this.els.previewCaption.textContent=(v?'Vehicle':'Station')+' · '+(live?'live':'sample');this.els.previewThemeName.textContent=theme.name;},
-renderChangelog(){const E=[['v10','Current',1,['Setup transfer (Export/Import, ?code=)','3 station themes: Receipt Roll, Ambient Sky, Brutal Index','3 vehicle themes: Door Indicator, Rolling Counter, Constellation','3 futuristic station themes: Holo Deck, Orbit Dial, Data Rain','3 futuristic vehicle themes: Warp Corridor, Synapse Hex, AR Visor','Journey-complete screen for vehicle themes','Wake-lock + reconnect refresh','Burn-in protection','Ilévia fixes, proportional arrows','Single-choice vehicle selectors','Perf: skip redundant re-renders','Self-contained build: inline SVG icons, no CDN fonts']],['v9','Earlier',0,['Ilévia rebuilt, Vertical Strip & Journey Ring','Scroll-safe search, GitHub button, tap-to-reveal status']],['v8','Earlier',0,['Infos tab, Credits & Changelog pop-ups','Android scroll fix, identified API requests, 60 s cadence']],['v7','Earlier',0,['Darker backdrop, vehicle single line+dest, live preview']],['v6','Earlier',0,['Vehicle mode + themes, Material 3, backdrop picker']],['v5','Earlier',0,['Click-to-open picker, typed icons, fullscreen']],['v4','Earlier',0,['Multi-select lines & destinations']],['v3','Earlier',0,['5 new themes, all-English']],['v2','Earlier',0,['Responsive portrait/landscape']],['v1','Initial',0,['Transitous MOTIS 2 live departures, 4 themes']]];
+renderChangelog(){const E=[['v10.1','Current',1,['Picture-in-Picture button beside fullscreen','PiP on Android via video-PiP fallback (canvas board stream)','Open Graph / Twitter metadata + inline SVG favicon']],['v10','Earlier',1,['Setup transfer (Export/Import, ?code=)','3 station themes: Receipt Roll, Ambient Sky, Brutal Index','3 vehicle themes: Door Indicator, Rolling Counter, Constellation','3 futuristic station themes: Holo Deck, Orbit Dial, Data Rain','3 futuristic vehicle themes: Warp Corridor, Synapse Hex, AR Visor','Journey-complete screen for vehicle themes','Wake-lock + reconnect refresh','Burn-in protection','Ilévia fixes, proportional arrows','Single-choice vehicle selectors','Perf: skip redundant re-renders','Self-contained build: inline SVG icons, no CDN fonts']],['v9','Earlier',0,['Ilévia rebuilt, Vertical Strip & Journey Ring','Scroll-safe search, GitHub button, tap-to-reveal status']],['v8','Earlier',0,['Infos tab, Credits & Changelog pop-ups','Android scroll fix, identified API requests, 60 s cadence']],['v7','Earlier',0,['Darker backdrop, vehicle single line+dest, live preview']],['v6','Earlier',0,['Vehicle mode + themes, Material 3, backdrop picker']],['v5','Earlier',0,['Click-to-open picker, typed icons, fullscreen']],['v4','Earlier',0,['Multi-select lines & destinations']],['v3','Earlier',0,['5 new themes, all-English']],['v2','Earlier',0,['Responsive portrait/landscape']],['v1','Initial',0,['Transitous MOTIS 2 live departures, 4 themes']]];
 document.getElementById('changelog-body').innerHTML=E.map(([v,d,l,items])=>'<div class="cl-entry'+(l?' latest':'')+'"><div class="cl-head"><span class="cl-ver">'+v+'</span><span class="cl-date">'+d+'</span>'+(l?'<span class="cl-tag new">New</span>':'')+'</div><div class="cl-items">'+items.map(i=>'<div class="cl-item">'+i+'</div>').join('')+'</div></div>').join('');},
 sync(){if(State.page!=='settings')return;document.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('active',b.dataset.mode===State.mode));if(State.station){this.els.chip.hidden=false;this.els.scName.textContent=State.station.name;this.els.scId.textContent=State.station.id;}else this.els.chip.hidden=true;this.renderModes();this.renderLineChips();this.renderDestList();this.renderVehicle();this.lineBox.setDisabled(!State.station||!State.lines.length);this.lineBox.input.placeholder=State.mode==='vehicle'?(State.selectedLineKeys.length?'Line selected — tap to change':'Search and pick a line'):'Search and tick lines…';this.lineBox.requery();if(State.settingsTab==='themes')this.els.themesGrid.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('selected',c.dataset.theme===(State.mode==='vehicle'?State.themeVehicle:State.themeStation)));this.renderPreview();}
 };
@@ -811,10 +907,11 @@ html+='<button class="v-cand" data-trip="'+U.esc(x.tripId)+'"><span class="line-
 this.els.body.innerHTML=html||'<div class="dialog-empty">No vehicles found.</div>';hydrateIcons(this.els.body);this.els.body.querySelectorAll('.v-cand').forEach(b=>b.addEventListener('click',()=>{App.setVehicle(b.dataset.trip);this.close();}));},
 close(){this.token++;this.els.scrim.classList.remove('open');}};
 const Wake={s:null,async acq(){try{if('wakeLock' in navigator&&!this.s&&document.visibilityState==='visible'){this.s=await navigator.wakeLock.request('screen');this.s.addEventListener('release',()=>this.s=null);}}catch(e){this.s=null;}},rel(){try{if(this.s){this.s.release();this.s=null;}}catch(e){}},init(){this.acq();document.addEventListener('visibilitychange',()=>document.visibilityState==='visible'?this.acq():this.rel());}};
-const Nav={fabTimer:null,init(){const cl=document.getElementById('fab-cluster'),fs=document.getElementById('fullscreen-fab'),st=document.getElementById('settings-fab'),dp=document.getElementById('display-screen'),se=document.getElementById('settings-screen'),ft=document.getElementById('display-footer');this.cl=cl;this.fs=fs;this.ft=ft;if('inert' in se)se.inert=true;
+const Nav={fabTimer:null,init(){const cl=document.getElementById('fab-cluster'),fs=document.getElementById('fullscreen-fab'),pip=document.getElementById('pip-fab'),st=document.getElementById('settings-fab'),dp=document.getElementById('display-screen'),se=document.getElementById('settings-screen'),ft=document.getElementById('display-footer');this.cl=cl;this.fs=fs;this.ft=ft;if('inert' in se)se.inert=true;
 document.getElementById('back-btn').addEventListener('click',()=>this.show('display'));
 st.addEventListener('click',e=>{e.stopPropagation();this.show('settings');});
 fs.addEventListener('click',e=>{e.stopPropagation();this.toggleFullscreen();});
+pip.addEventListener('click',e=>{e.stopPropagation();Pip.toggle();this.reveal();});
 dp.addEventListener('pointerdown',e=>{if(e.target.closest('a,button'))return;this.reveal();});
 document.getElementById('attribution-link').addEventListener('pointerdown',e=>e.stopPropagation());
 ['welcome-settings-btn','error-settings-btn','empty-settings-btn','vehicle-settings-btn'].forEach(id=>document.getElementById(id).addEventListener('click',()=>this.show('settings')));
@@ -824,10 +921,10 @@ const onFs=()=>{fs.classList.toggle('is-fs',!!(document.fullscreenElement||docum
 document.addEventListener('fullscreenchange',onFs);document.addEventListener('webkitfullscreenchange',onFs);
 window.addEventListener('online',()=>{U.toast('Connection restored — refreshing','success');State.lastRefreshFailed=false;App.refreshNow();});
 window.addEventListener('offline',()=>{State.lastRefreshFailed=true;Display.updateFooter();U.toast('Connection lost — will refresh when back','warn');});
-try{if(!localStorage.getItem(CONFIG.HINT_KEY)){this.hint(dp,'Tap the display to reveal fullscreen, settings & status');localStorage.setItem(CONFIG.HINT_KEY,'1');}}catch(e){}},
+try{if(!localStorage.getItem(CONFIG.HINT_KEY)){this.hint(dp,'Tap the display to reveal PiP, fullscreen, settings & status');localStorage.setItem(CONFIG.HINT_KEY,'1');}}catch(e){}},
 hint(p,t){const el=document.createElement('div');el.className='transient-hint';el.textContent=t;p.appendChild(el);setTimeout(()=>el.remove(),6200);},
-reveal(){this.cl.classList.add('revealed');this.ft.classList.add('revealed');this.fs.tabIndex=0;clearTimeout(this.fabTimer);this.fabTimer=setTimeout(()=>this.hide(),CONFIG.FAB_HIDE_MS);},
-hide(){this.cl.classList.remove('revealed');this.ft.classList.remove('revealed');this.fs.tabIndex=-1;},
+reveal(){this.cl.classList.add('revealed');this.ft.classList.add('revealed');this.fs.tabIndex=0;document.getElementById('pip-fab').tabIndex=0;clearTimeout(this.fabTimer);this.fabTimer=setTimeout(()=>this.hide(),CONFIG.FAB_HIDE_MS);},
+hide(){this.cl.classList.remove('revealed');this.ft.classList.remove('revealed');this.fs.tabIndex=-1;document.getElementById('pip-fab').tabIndex=-1;},
 async toggleFullscreen(){const el=document.documentElement;try{if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else if(el.requestFullscreen)await el.requestFullscreen({navigationUI:'hide'});else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();else{U.toast('Fullscreen not supported','warn');this.reveal();return;}}catch(e){U.toast('Fullscreen blocked','warn');}this.reveal();},
 show(p){State.page=p;const se=document.getElementById('settings-screen');if(p==='settings'){se.classList.add('open');se.setAttribute('aria-hidden','false');if('inert' in se)se.inert=false;this.hide();clearTimeout(this.fabTimer);se.scrollTop=0;Settings.sync();if(State.settingsTab==='themes')Settings.renderThemeCards();}else{se.classList.remove('open');se.setAttribute('aria-hidden','true');if('inert' in se)se.inert=true;Settings.destroyCards();Settings.previewSig='';Display.lastSig='';Display.render();}}};
 const App={
@@ -836,7 +933,7 @@ commit(){Data.applyFilter();Store.save();Display.lastSig='';Display.render();Set
 refreshNow(){State.mode==='vehicle'&&State.vehicleTripId?Data.refreshTrip():Data.refresh(true);},
 importConfig(c){Store.apply(c);if(!Themes.has(State.themeStation))State.themeStation='ratp-modern';if(!Themes.has(State.themeVehicle))State.themeVehicle='v-ilevia';State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicle=null;document.documentElement.style.setProperty('--stage-bg',State.bg);if(Settings.lineBox)Settings.lineBox.clear();Store.save();Settings.previewSig='';Display.lastSig='';U.toast('Setup imported','success');Data.loadOverview();if(State.mode==='vehicle'&&State.vehicleTripId)Data.loadTrip(State.vehicleTripId);Settings.sync();},
 setMode(m){if(State.mode===m)return;State.mode=m;if(m==='vehicle'){if(State.selectedLineKeys.length>1)State.selectedLineKeys=[State.selectedLineKeys[0]];State.vehicleTripId=null;State.vehicle=null;this.ensureSelections(true);}Store.save();Display.lastSig='';Display.render();Settings.sync();U.toast(m==='vehicle'?'Vehicle mode — single line & destination':'Station mode','success');},
-setBg(c){State.bg=c;document.documentElement.style.setProperty('--stage-bg',c);Store.save();Settings.renderBg();},
+setBg(c){State.bg=c;document.documentElement.style.setProperty('--stage-bg',c);Store.save();Settings.renderBg();if(Pip.win&&!Pip.win.closed)Pip.win.document.body.style.background=c;},
 setStation(st){State.station=st;State.selectedLineKeys=[];State.selectedDestinations=[];State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicleTripId=null;State.vehicle=null;if(Settings.lineBox)Settings.lineBox.clear();Store.save();Display.lastSig='';U.toast('Station: '+st.name,'success');Data.loadOverview();},
 toggleMode(c){const i=State.selectedModes.indexOf(c);if(i>=0){if(State.selectedModes.length===1){U.toast('Keep one type','warn');return;}State.selectedModes.splice(i,1);}else State.selectedModes.push(c);this.ensureSelections(true);this.commit();},
 toggleLine(k){if(State.mode==='vehicle'){State.selectedLineKeys=[k];State.selectedDestinations=[];State.vehicleTripId=null;State.vehicle=null;this.ensureSelections(false);}else{const i=State.selectedLineKeys.indexOf(k);i>=0?State.selectedLineKeys.splice(i,1):State.selectedLineKeys.push(k);this.ensureSelections(false);}this.commit();},
