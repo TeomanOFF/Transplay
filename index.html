@@ -12,18 +12,17 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Transplay">
 <meta property="og:title" content="Transplay — Live Station & Vehicle Displays">
-<meta property="og:description" content="Live departure boards and onboard next-stop displays with 20+ themes, powered by real Transitous data.">
+<meta property="og:description" content="Live departure boards and onboard next-stop displays with 20+ themes, voice announcements and Picture-in-Picture, powered by real Transitous data.">
 <meta property="og:url" content="https://github.com/TeomanOFF/Transplay">
 <meta property="og:image" content="https://raw.githubusercontent.com/TeomanOFF/Transplay/main/og-cover.png">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Transplay — Live Station & Vehicle Displays">
-<meta name="twitter:description" content="Live departure boards and onboard next-stop displays with 20+ themes, powered by real Transitous data.">
+<meta name="twitter:description" content="Live departure boards and onboard next-stop displays with 20+ themes, voice announcements and Picture-in-Picture.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/TeomanOFF/Transplay/main/og-cover.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Transplay">
-<!-- Inline SVG favicon (offline, no CDN) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a100d'/%3E%3Ccircle cx='22' cy='22' r='8' fill='%238fdb9b'/%3E%3Cpath d='M34 16l10 8-10 8' fill='none' stroke='%238fdb9b' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14 46h36' stroke='%23ffb000' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 <!-- Fully offline: icons are an inline SVG sprite (ICONS + hydrateIcons); type uses system stacks. -->
 <style>
@@ -63,6 +62,8 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 .m3-fab{width:52px;height:52px;border-radius:16px;background:var(--md-sc-highest);color:var(--md-primary);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .m3-fab .msr{font-size:24px;width:24px;height:24px}
 #fullscreen-fab.is-fs,#pip-fab.is-pip{background:var(--md-primary-container);color:var(--md-on-primary-container)}
+#mute-fab.muted{background:var(--md-error-container);color:#ffdad6}
+#mute-fab[hidden]{display:none}
 #fullscreen-fab .fs-compress{display:none}#fullscreen-fab.is-fs .fs-expand{display:none}#fullscreen-fab.is-fs .fs-compress{display:inline-flex}
 #display-footer{position:absolute;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px calc(16px + var(--sar)) calc(8px + var(--sab)) calc(16px + var(--sal));font-size:11.5px;color:color-mix(in srgb,var(--md-on-surface) 55%,transparent);opacity:0;visibility:hidden;transition:.25s}
 #display-footer.revealed{opacity:1;visibility:visible}
@@ -187,6 +188,19 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 .bg-custom{display:flex;align-items:center;gap:8px;margin-left:auto}
 .bg-custom input[type=color]{width:40px;height:40px;border:none;border-radius:14px 6px 14px 6px;background:none;cursor:pointer;padding:0}
 .bg-hex{font-family:var(--mono);font-size:12px;color:var(--md-on-surface-var)}
+.tts-row{display:flex;align-items:center;gap:14px}
+.tts-row span{font-size:13.5px;color:var(--md-on-surface-var);line-height:1.4}
+.sw{width:52px;height:32px;border-radius:16px;background:var(--md-outline);position:relative;flex:none;cursor:pointer;transition:background .2s}
+.sw::after{content:'';position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:var(--md-on-surface);transition:left .2s,background .2s}
+.sw.on{background:var(--md-primary)}.sw.on::after{left:24px;background:var(--md-on-primary)}
+.tts-cfg{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.tts-cfg[hidden]{display:none}
+.tts-field{display:flex;align-items:center;gap:12px}
+.tts-field label{font-size:13px;font-weight:700;color:var(--md-on-surface-var);width:82px;flex:none}
+.tts-field input[type=text]{flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--md-outline);background:var(--md-sc);color:var(--md-on-surface);font-size:14px;outline:none;min-width:0}
+.tts-field input[type=text]:focus{border-color:var(--md-primary)}
+.tts-field input[type=range]{flex:1;accent-color:var(--md-primary);min-width:0}
+.tts-field .val{width:52px;text-align:right;font-size:13px;color:var(--md-on-surface-var);font-variant-numeric:tabular-nums;flex:none}
 .preview-block{background:var(--md-sc-low);border:1px solid var(--md-outline-var);border-radius:24px;padding:20px}
 .preview-frame{border-radius:14px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;background:var(--stage-bg)}
 .preview-live{position:absolute;top:8px;left:10px;z-index:6;display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(10,16,13,.85)}
@@ -292,6 +306,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 <div class="stage-overlay" id="overlay-welcome" hidden><div class="overlay-card"><span class="msr ov-icon" data-icon="departure_board"></span><h2>Welcome to Transplay</h2><p>Live station &amp; onboard vehicle displays powered by real Transitous data.</p><div class="overlay-actions"><button class="m3-btn m3-filled" id="welcome-settings-btn"><span class="msr" data-icon="tune"></span>Set up display</button></div></div></div>
 </div>
 <div id="fab-cluster">
+<button id="mute-fab" class="m3-fab" aria-label="Mute announcements" tabindex="-1" hidden><span class="msr" data-icon="volume_up"></span></button>
 <button id="pip-fab" class="m3-fab" aria-label="Picture in picture" tabindex="-1"><span class="msr" data-icon="picture_in_picture"></span></button>
 <button id="fullscreen-fab" class="m3-fab" aria-label="Toggle fullscreen" tabindex="-1"><span class="msr fs-expand" data-icon="fullscreen"></span><span class="msr fs-compress" data-icon="fullscreen_exit"></span></button>
 <button id="settings-fab" class="m3-fab" aria-label="Open settings" tabindex="-1"><span class="msr" data-icon="settings"></span></button>
@@ -326,6 +341,16 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 <div class="field-note">Lists every vehicle on the selected line + destination with its current stop.</div></div>
 <div class="m3-card"><div class="field-label"><span class="msr" data-icon="format_color_fill"></span> Backdrop color <span class="count-pill" id="bg-hex-pill">#010402</span></div><div class="bg-swatches" id="bg-swatches"></div>
 <div class="field-note">Color behind the sign (letterbox in portrait).</div></div>
+<div class="m3-card"><div class="field-label"><span class="msr" data-icon="graphic_eq"></span> Voice announcements</div>
+<div class="tts-row"><button class="sw" id="tts-sw" role="switch" aria-checked="false" aria-label="Enable voice announcements"></button><span>Announce departures &amp; next stops aloud (Web Speech API)</span></div>
+<div class="tts-cfg" id="tts-cfg" hidden>
+<div class="tts-field"><label for="tts-lang">Language</label><input type="text" id="tts-lang" list="tts-langs" placeholder="en-US" autocomplete="off"><datalist id="tts-langs"><option>en-US</option><option>en-GB</option><option>fr-FR</option><option>de-DE</option><option>es-ES</option><option>it-IT</option><option>pt-BR</option><option>nl-NL</option><option>sv-SE</option><option>pl-PL</option><option>tr-TR</option><option>ja-JP</option><option>ko-KR</option><option>zh-CN</option><option>ar-SA</option><option>hi-IN</option></datalist></div>
+<div class="tts-field"><label for="tts-rate">Speed</label><input type="range" id="tts-rate" min="0.5" max="2" step="0.1"><span class="val" id="tts-rate-v">1.0×</span></div>
+<div class="tts-field"><label for="tts-pitch">Pitch</label><input type="range" id="tts-pitch" min="0" max="2" step="0.1"><span class="val" id="tts-pitch-v">1.0</span></div>
+<div class="tts-field"><label for="tts-vol">Volume</label><input type="range" id="tts-vol" min="0" max="1" step="0.1"><span class="val" id="tts-vol-v">100%</span></div>
+<div class="share-actions" style="justify-content:flex-start"><button class="m3-btn m3-tonal" id="tts-test" style="height:38px"><span class="msr" data-icon="volume_up"></span>Test voice</button></div>
+</div>
+<div class="field-note">While on, a quick mute button appears beside fullscreen. Announcements follow mode: departures on station, next stops on vehicle.</div></div>
 <div class="m3-card"><div class="field-label"><span class="msr" data-icon="sync_alt"></span> Transfer setup</div>
 <div class="transfer-actions"><button class="m3-btn m3-tonal" id="export-btn"><span class="msr" data-icon="upload"></span>Export</button><button class="m3-btn m3-tonal" id="import-btn"><span class="msr" data-icon="download"></span>Import</button></div>
 <div class="field-note">Export a compact code to replicate this setup elsewhere, or import one. Tip: append <b>?code=CODE</b> to the URL to auto-import.</div></div>
@@ -342,7 +367,7 @@ input,textarea{font-family:inherit}a{color:var(--md-primary)}
 <div class="tp-row"><span class="tp-m">M</span><span class="tp-dest">Airport</span><span class="tp-min">12 min</span></div>
 </div><div class="tp-divider"></div><span class="msr tp-train" data-icon="train"></span><div class="tp-name">TRANSPLAY</div></div>
 <div class="infos-name">Transplay</div>
-<span class="infos-ver"><span class="msr" data-icon="tag"></span>Current version&nbsp;<b id="infos-version">v10.1</b></span>
+<span class="infos-ver"><span class="msr" data-icon="tag"></span>Current version&nbsp;<b id="infos-version">v11</b></span>
 <p class="infos-tag">Live station &amp; onboard vehicle displays · Material 3 · powered by real Transitous data.</p>
 <div class="infos-actions">
 <button class="m3-btn m3-filled" id="credits-btn"><span class="msr" data-icon="favorite"></span>Credits</button>
@@ -377,6 +402,9 @@ arrow_forward:'M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z',
 fullscreen:'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z',
 fullscreen_exit:'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z',
 picture_in_picture:'M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM19 7h-8v6h8V7z',
+volume_up:'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z',
+volume_off:'M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z',
+graphic_eq:'M7 18h2V6H7v12zm4 4h2V2h-2v20zm-8-8h2v-4H3v4zm12 4h2V6h-2v12zm4-8v4h2v-4h-2z',
 settings:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
 tune:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
 info:'M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z',
@@ -413,11 +441,11 @@ my_location:'M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-
 };
 function hydrateIcons(scope){(scope||document).querySelectorAll('.msr').forEach(sp=>{const n=(sp.dataset.icon||'').trim();if(!n||sp.dataset.ic===n)return;const p=ICONS[n];if(p){sp.dataset.ic=n;sp.textContent='';sp.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+p+'"/></svg>');}});}
 new MutationObserver(muts=>{for(const m of muts){if(m.addedNodes)for(const n of m.addedNodes){if(n.nodeType===1){if(n.classList&&n.classList.contains('msr'))hydrateIcons(n.parentElement||n);else if(n.querySelectorAll)hydrateIcons(n);}}}}).observe(document.body,{childList:true,subtree:true});
-const APP_VERSION='v10.1';
+const APP_VERSION='v11';
 const API_HEADERS=Object.freeze({'Accept':'application/json','X-Name':'Transplay','X-Mail':'teoman.trsw@atomicmail.io','X-Version':APP_VERSION});
-const CONFIG=Object.freeze({API_BASE:'https://api.transitous.org/api/',REFRESH_MS:60000,TICK_MS:1000,SEARCH_DEBOUNCE_MS:350,SEARCH_MIN_CHARS:2,REQUEST_TIMEOUT_MS:12000,GEOCODE_TTL:600000,OVERVIEW_TTL:300000,TRIP_TTL:55000,OVERVIEW_COUNT:100,OVERVIEW_MAX_PAGES:2,DEPARTURE_COUNT:100,MAX_DEPS:14,EXPIRE_GRACE_MS:60000,DUE_S:45,FAB_HIDE_MS:4200,STORAGE_KEY:'transplay.v10',HINT_KEY:'transplay.hint.v10',DEFAULT_BG:'#010402',BG_SWATCHES:['#010402','#020806','#05070c','#0a0a0b','#0b1220','#140b1e','#0e1512','#1a1408'],DEFAULT_STATION:Object.freeze({id:'fr-reseau-urbain-et-interurbain-dile-de-france-mobilites_IDFM:71264',name:'Châtelet',tz:'Europe/Paris',country:'FR'})});
+const CONFIG=Object.freeze({API_BASE:'https://api.transitous.org/api/',REFRESH_MS:60000,TICK_MS:1000,SEARCH_DEBOUNCE_MS:350,SEARCH_MIN_CHARS:2,REQUEST_TIMEOUT_MS:12000,GEOCODE_TTL:600000,OVERVIEW_TTL:300000,TRIP_TTL:55000,OVERVIEW_COUNT:100,OVERVIEW_MAX_PAGES:2,DEPARTURE_COUNT:100,MAX_DEPS:14,EXPIRE_GRACE_MS:60000,DUE_S:45,FAB_HIDE_MS:4200,STORAGE_KEY:'transplay.v11',HINT_KEY:'transplay.hint.v10',DEFAULT_BG:'#010402',BG_SWATCHES:['#010402','#020806','#05070c','#0a0a0b','#0b1220','#140b1e','#0e1512','#1a1408'],DEFAULT_STATION:Object.freeze({id:'fr-reseau-urbain-et-interurbain-dile-de-france-mobilites_IDFM:71264',name:'Châtelet',tz:'Europe/Paris',country:'FR'})});
 /* Stable theme-id table for compact sharing: APPEND new ids only (never reorder). */
-const THEME_IDS=['ratp-modern','ratp-classic','nyc-subway','led-board','split-flap','swiss-rail','tokyo-lcd','london-tfl','neon-terminal','db-abfahrt','ns-yellow','harbor-ferry','heritage-brass','gate-mosaic','twin-directions','receipt-roll','ambient-sky','brutal-index','holo-deck','orbit-dial','data-rain','v-ilevia','v-paris-bus','v-paris-metro','v-bvg','v-tokyo','v-amber','v-aurora','v-strip','v-ring','v-hud','v-ticket','v-poster','v-stack','v-wave','v-door','v-counter','v-constellation','v-warp','v-hex','v-visor'];
+const THEME_IDS=['ratp-modern','ratp-classic','nyc-subway','led-board','split-flap','swiss-rail','tokyo-lcd','london-tfl','neon-terminal','db-abfahrt','ns-yellow','harbor-ferry','heritage-brass','gate-mosaic','twin-directions','receipt-roll','ambient-sky','brutal-index','holo-deck','orbit-dial','data-rain','v-ilevia','v-paris-bus','v-paris-metro','v-bvg','v-tokyo','v-amber','v-aurora','v-strip','v-ring','v-hud','v-ticket','v-poster','v-stack','v-wave','v-door','v-counter','v-constellation','v-warp','v-hex','v-visor','v-gauge'];
 const U={
 esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));},
 stripHtml(s){const d=document.createElement('div');d.innerHTML=String(s||'');return d.textContent||'';},
@@ -438,26 +466,28 @@ stopKind(r){if(r.type==='ADDRESS')return{cls:'k-road',label:'Road',msr:'signpost
 b64enc(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');},
 b64dec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));}
 };
-const State={page:'display',settingsTab:'main',mode:'station',bg:CONFIG.DEFAULT_BG,station:null,selectedModes:['metro'],selectedLineKeys:[],selectedDestinations:[],themeStation:'ratp-modern',themeVehicle:'v-ilevia',vehicleTripId:null,vehicle:null,vehicleLoading:false,stationSearchAll:false,availableCategories:new Set(),availabilityKnown:false,lines:[],destinationsByLine:new Map(),rawDepartures:[],overviewLoading:false,departures:[],departuresError:null,lastUpdated:null,lastRefreshFailed:false};
+const State={page:'display',settingsTab:'main',mode:'station',bg:CONFIG.DEFAULT_BG,station:null,selectedModes:['metro'],selectedLineKeys:[],selectedDestinations:[],themeStation:'ratp-modern',themeVehicle:'v-ilevia',vehicleTripId:null,vehicle:null,vehicleLoading:false,stationSearchAll:false,availableCategories:new Set(),availabilityKnown:false,lines:[],destinationsByLine:new Map(),rawDepartures:[],overviewLoading:false,departures:[],departuresError:null,lastUpdated:null,lastRefreshFailed:false,tts:{enabled:false,muted:false,lang:'en-US',rate:1,pitch:1,volume:1}};
 const Store={
-save(){try{localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify({mode:State.mode,bg:State.bg,station:State.station,modes:State.selectedModes,lineKeys:State.selectedLineKeys,destinations:State.selectedDestinations,themeStation:State.themeStation,themeVehicle:State.themeVehicle,vehicleTripId:State.vehicleTripId}));}catch(e){}},
-restore(){try{const raw=localStorage.getItem(CONFIG.STORAGE_KEY)||localStorage.getItem('transplay.v9');if(!raw)return false;this.apply(JSON.parse(raw));return !!State.station;}catch(e){return false;}},
-apply(d){if(!d)return;if(d.mode==='vehicle'||d.mode==='station')State.mode=d.mode;if(/^#[0-9a-fA-F]{6}$/.test(d.bg||''))State.bg=d.bg;if(d.station&&d.station.id)State.station=d.station;if(Array.isArray(d.modes)&&d.modes.length)State.selectedModes=d.modes.filter(m=>['bus','metro','train'].includes(m));if(Array.isArray(d.lineKeys))State.selectedLineKeys=d.lineKeys.filter(k=>typeof k==='string');if(Array.isArray(d.destinations))State.selectedDestinations=d.destinations.filter(x=>typeof x==='string');if(d.themeStation)State.themeStation=d.themeStation;if(d.themeVehicle)State.themeVehicle=d.themeVehicle;if(d.vehicleTripId)State.vehicleTripId=d.vehicleTripId;},
-reset(){try{localStorage.removeItem(CONFIG.STORAGE_KEY);}catch(e){}State.mode='station';State.bg=CONFIG.DEFAULT_BG;State.station={...CONFIG.DEFAULT_STATION};State.selectedModes=['metro'];State.selectedLineKeys=[];State.selectedDestinations=[];State.themeStation='ratp-modern';State.themeVehicle='v-ilevia';State.vehicleTripId=null;State.vehicle=null;}
+save(){try{localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify({mode:State.mode,bg:State.bg,station:State.station,modes:State.selectedModes,lineKeys:State.selectedLineKeys,destinations:State.selectedDestinations,themeStation:State.themeStation,themeVehicle:State.themeVehicle,vehicleTripId:State.vehicleTripId,tts:State.tts}));}catch(e){}},
+restore(){try{const keys=['transplay.v11','transplay.v10','transplay.v9'];let raw=null;for(const k of keys){raw=localStorage.getItem(k);if(raw)break;}if(!raw)return false;this.apply(JSON.parse(raw));return !!State.station;}catch(e){return false;}},
+apply(d){if(!d)return;if(d.mode==='vehicle'||d.mode==='station')State.mode=d.mode;if(/^#[0-9a-fA-F]{6}$/.test(d.bg||''))State.bg=d.bg;if(d.station&&d.station.id)State.station=d.station;if(Array.isArray(d.modes)&&d.modes.length)State.selectedModes=d.modes.filter(m=>['bus','metro','train'].includes(m));if(Array.isArray(d.lineKeys))State.selectedLineKeys=d.lineKeys.filter(k=>typeof k==='string');if(Array.isArray(d.destinations))State.selectedDestinations=d.destinations.filter(x=>typeof x==='string');if(d.themeStation)State.themeStation=d.themeStation;if(d.themeVehicle)State.themeVehicle=d.themeVehicle;if(d.vehicleTripId)State.vehicleTripId=d.vehicleTripId;
+if(d.tts&&typeof d.tts==='object')State.tts={enabled:!!d.tts.enabled,muted:!!d.tts.muted,lang:d.tts.lang||'en-US',rate:+d.tts.rate||1,pitch:d.tts.pitch==null?1:+d.tts.pitch,volume:d.tts.volume==null?1:+d.tts.volume};},
+reset(){try{['transplay.v11','transplay.v10'].forEach(k=>localStorage.removeItem(k));}catch(e){}State.mode='station';State.bg=CONFIG.DEFAULT_BG;State.station={...CONFIG.DEFAULT_STATION};State.selectedModes=['metro'];State.selectedLineKeys=[];State.selectedDestinations=[];State.themeStation='ratp-modern';State.themeVehicle='v-ilevia';State.vehicleTripId=null;State.vehicle=null;State.tts={enabled:false,muted:false,lang:'en-US',rate:1,pitch:1,volume:1};}
 };
-/* Setup codec TP1: positional array [mode,bg6,stationId,name,tz,modeMask,lineKeys,dests,themeS,themeV,tripId];
+/* Setup codec TP1: positional array [mode,bg6,stationId,name,tz,modeMask,lineKeys,dests,themeS,themeV,tripId,tts[6]];
    themes→base36 index of THEME_IDS (unknown "?id"), modes→bitmask, trailing empties trimmed, JSON→base64url. */
 const Share={
 encTheme(id){const i=THEME_IDS.indexOf(id);return i>=0?i.toString(36):'?'+id;},
 decTheme(c){if(typeof c!=='string')return null;if(c[0]==='?')return c.slice(1);return THEME_IDS[parseInt(c,36)]||null;},
-encode(){const s=State.station;const mask=State.selectedModes.reduce((m,x)=>m|({bus:1,metro:2,train:4})[x],0);
-const a=[State.mode==='vehicle'?1:0,(State.bg||'').replace('#',''),s?s.id:'',s?s.name:'',s?(s.tz||''):'',mask,State.selectedLineKeys,State.selectedDestinations,Share.encTheme(State.themeStation),Share.encTheme(State.themeVehicle),State.vehicleTripId||''];
+encode(){const s=State.station;const mask=State.selectedModes.reduce((m,x)=>m|({bus:1,metro:2,train:4})[x],0);const t=State.tts;
+const a=[State.mode==='vehicle'?1:0,(State.bg||'').replace('#',''),s?s.id:'',s?s.name:'',s?(s.tz||''):'',mask,State.selectedLineKeys,State.selectedDestinations,Share.encTheme(State.themeStation),Share.encTheme(State.themeVehicle),State.vehicleTripId||'',[t.enabled?1:0,t.muted?1:0,t.lang||'en-US',t.rate,t.pitch,t.volume]];
 while(a.length&&!(Array.isArray(a[a.length-1])?a[a.length-1].length:a[a.length-1]))a.pop();
 return 'TP1.'+U.b64enc(JSON.stringify(a));},
 decode(code){code=String(code||'').trim();if(!code)return null;try{
 if(code.indexOf('TP1.')===0){const a=JSON.parse(U.b64dec(code.slice(4)));if(!Array.isArray(a)||!a[2])return null;const mask=a[5]||0;const modes=['bus','metro','train'].filter((x,i)=>mask&(1<<i));
-return{mode:a[0]===1?'vehicle':'station',bg:/^[0-9a-fA-F]{6}$/.test(a[1]||'')?'#'+a[1]:CONFIG.DEFAULT_BG,station:{id:a[2],name:a[3]||a[2],tz:a[4]||null,country:''},modes:modes.length?modes:['metro'],lineKeys:Array.isArray(a[6])?a[6]:[],destinations:Array.isArray(a[7])?a[7]:[],themeStation:Share.decTheme(a[8])||'ratp-modern',themeVehicle:Share.decTheme(a[9])||'v-ilevia',vehicleTripId:a[10]||null};}
-const d=JSON.parse(U.b64dec(code));if(d&&Array.isArray(d.s))return{mode:d.m==='vehicle'?'vehicle':'station',bg:/^#[0-9a-fA-F]{6}$/.test(d.b||'')?d.b:CONFIG.DEFAULT_BG,station:{id:d.s[0],name:d.s[1],tz:d.s[2]||null,country:d.s[3]||''},modes:Array.isArray(d.mo)?d.mo:[],lineKeys:Array.isArray(d.l)?d.l:[],destinations:Array.isArray(d.d)?d.d:[],themeStation:d.ts||'ratp-modern',themeVehicle:d.tv||'v-ilevia',vehicleTripId:d.v||null};
+let tts=null;if(Array.isArray(a[11])&&a[11].length>=3)tts={enabled:!!a[11][0],muted:!!a[11][1],lang:a[11][2]||'en-US',rate:+a[11][3]||1,pitch:a[11][4]==null?1:+a[11][4],volume:a[11][5]==null?1:+a[11][5]};
+return{mode:a[0]===1?'vehicle':'station',bg:/^[0-9a-fA-F]{6}$/.test(a[1]||'')?'#'+a[1]:CONFIG.DEFAULT_BG,station:{id:a[2],name:a[3]||a[2],tz:a[4]||null,country:''},modes:modes.length?modes:['metro'],lineKeys:Array.isArray(a[6])?a[6]:[],destinations:Array.isArray(a[7])?a[7]:[],themeStation:Share.decTheme(a[8])||'ratp-modern',themeVehicle:Share.decTheme(a[9])||'v-ilevia',vehicleTripId:a[10]||null,tts};}
+const d=JSON.parse(U.b64dec(code));if(d&&Array.isArray(d.s))return{mode:d.m==='vehicle'?'vehicle':'station',bg:/^#[0-9a-fA-F]{6}$/.test(d.b||'')?d.b:CONFIG.DEFAULT_BG,station:{id:d.s[0],name:d.s[1],tz:d.s[2]||null,country:d.s[3]||''},modes:Array.isArray(d.mo)?d.mo:[],lineKeys:Array.isArray(d.l)?d.l:[],destinations:Array.isArray(d.d)?d.d:[],themeStation:d.ts||'ratp-modern',themeVehicle:d.tv||'v-ilevia',vehicleTripId:d.v||null,tts:d.tts||null};
 return null;}catch(e){return null;}},
 applyFromUrl(){try{const p=new URLSearchParams(location.search);const code=p.get('code')||p.get('save');if(!code)return false;const cfg=Share.decode(code);if(!cfg)return false;Store.apply(cfg);Store.save();p.delete('code');p.delete('save');const q=p.toString();history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash);U.toast('Setup imported from link','success');return true;}catch(e){return false;}},
 copy(text,label){const done=()=>U.toast(label+' copied','success');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>Share.fb(text,done));}else Share.fb(text,done);},
@@ -494,22 +524,9 @@ function register(def){if(!def||!def.id||!def.render||!def.designWidth||!def.des
 const t=Object.assign({mode:'station',description:'',styles:'',sample:null,formatCountdown:(d,s)=>String(U.minutesLeft(s)),countdownState:(d,s)=>d.cancelled?'cancelled':(s<=CONFIG.DUE_S?'due':'normal'),formatClock:(d,f,tz)=>U.fmtClock(d,f||'hm',tz),formatStopCd:(st,sec)=>sec<=CONFIG.DUE_S?'Now':String(U.minutesLeft(sec))},def);
 reg.set(t.id,t);if(t.styles){const s=document.createElement('style');s.id='theme-style-'+t.id;s.textContent=t.styles;document.head.appendChild(s);}return true;}
 return{register,get:id=>reg.get(id)||null,has:id=>reg.has(id),list:m=>Array.from(reg.values()).filter(t=>!m||t.mode===m),first:m=>Array.from(reg.values()).find(t=>t.mode===m)||null};})();
-const ThemeMgr=(()=>{
-function finishedBoard(d,h){const lc=(d.line&&d.line.color)||'#8fdb9b';return '<div class="fin" style="--fc:'+lc+'"><div class="fin-ring"><span class="msr" data-icon="flag"></span></div><div class="fin-k">Journey complete</div><div class="fin-n">'+h.esc(d.destination||'Terminus')+'</div><div class="fin-s">This service ends here · thank you for riding</div><span class="fin-line" style="color:'+U.contrastText(lc)+'">'+h.esc(d.line?d.line.shortName:'—')+'</span></div>';}
-function mount(container,theme,data,fitMode){if(!theme)return null;container.innerHTML='';
-const d=Object.assign({},data,{lines:data.lines||(data.line?[data.line]:[]),destinations:data.destinations||(data.destination?[data.destination]:[])});
-const fin=theme.mode==='vehicle'&&d.finished;const W=fin?1280:theme.designWidth,Hh=fin?640:theme.designHeight;
-const fit=document.createElement('div');fit.className='board-fit';const sc=document.createElement('div');sc.className='board-scaler';sc.style.width=W+'px';sc.style.height=Hh+'px';
-sc.innerHTML=fin?finishedBoard(d,H):theme.render(d,H);fit.appendChild(sc);container.appendChild(fit);hydrateIcons(sc);
-const handle={root:sc,theme,data:d,container,observer:null,offResize:null,destroy(){if(handle.observer)handle.observer.disconnect();if(handle.offResize)handle.offResize();container.innerHTML='';}};
-function fitNow(){const cs=(container.ownerDocument.defaultView||window).getComputedStyle(container);const px=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);const py=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);const cw=container.clientWidth-px,ch=container.clientHeight-py;if(cw<=0)return;let s;if(fitMode==='contain')s=Math.min(cw/W,(ch>0?ch:1e9)/Hh);else{s=cw/W;container.style.height=Math.round(Hh*s+py)+'px';}s=Math.max(.02,s);fit.style.width=Math.round(W*s)+'px';fit.style.height=Math.round(Hh*s)+'px';sc.style.transform='scale('+s+')';}
-fitNow();const win=container.ownerDocument.defaultView||window;win.addEventListener('resize',fitNow);handle.offResize=()=>win.removeEventListener('resize',fitNow);
-const RO=win.ResizeObserver;if(RO){handle.observer=new RO(fitNow);handle.observer.observe(container);}
-return handle;}
-function activeTheme(){return Themes.get(State.mode==='vehicle'?State.themeVehicle:State.themeStation)||Themes.first(State.mode);}
-return{mount,activeTheme};})();
 const H={
 esc:U.esc,
+finish(d){const lc=(d.line&&d.line.color)||'#8fdb9b';return '<div class="fin" style="--fc:'+lc+'"><div class="fin-ring"><span class="msr" data-icon="flag"></span></div><div class="fin-k">Journey complete</div><div class="fin-n">'+H.esc(d.destination||'Terminus')+'</div><div class="fin-s">This service ends here · thank you for riding</div><span class="fin-line" style="color:'+U.contrastText(lc)+'">'+H.esc(d.line?d.line.shortName:'—')+'</span></div>';},
 badge(line,cls){if(!line)return '<span class="'+cls+' line-badge" style="background:#3a4a40;color:#fff">—</span>';const bg=line.color||'#3a4a40';const fg=line.textColor||U.contrastText(bg);const t=line.shortName||'—';return '<span class="'+cls+' line-badge'+(t.length>2?' pill':'')+'" style="background:'+bg+';color:'+fg+'">'+U.esc(t)+'</span>';},
 badgeCluster(lines,cls,max){const a=(lines&&lines.length?lines:[null]);let h='<span class="badge-cluster">';a.slice(0,max||3).forEach(l=>h+=H.badge(l,cls));if(a.length>(max||3))h+='<span class="'+cls+' line-badge">+'+(a.length-(max||3))+'</span>';return h+'</span>';},
 miniBadge(l){if(!l)return '';return '<span class="mini-badge" style="background:'+(l.color||'#3a4a40')+';color:'+(l.textColor||U.contrastText(l.color||'#3a4a40'))+'">'+U.esc(l.shortName)+'</span>';},
@@ -536,6 +553,19 @@ if((d.stops||[]).some(s=>s.delaySeconds>=120))return '<div class="'+cls+' warn">
 return '<div class="'+cls+' ok"><span class="msr" data-icon="check_circle"></span><span class="ab-txt">No reported disruptions</span></div>';},
 clockSVG(cls,tz){const p=U.stationParts(new Date(),tz);const ang=h=>h==='s'?(p.s<58.5?p.s/58.5*360:360):h==='m'?p.m*6:((p.h%12)+p.m/60)*30;let t='';for(let i=0;i<60;i++){const mj=i%5===0,a=i*6*Math.PI/180,r1=mj?104:112;t+='<line x1="'+(130+r1*Math.sin(a)).toFixed(1)+'" y1="'+(130-r1*Math.cos(a)).toFixed(1)+'" x2="'+(130+120*Math.sin(a)).toFixed(1)+'" y2="'+(130-120*Math.cos(a)).toFixed(1)+'" stroke="#101418" stroke-width="'+(mj?7:2.5)+'"/>';}return '<svg class="'+cls+'" viewBox="0 0 260 260"><circle cx="130" cy="130" r="126" fill="#f7f5f0"/>'+t+'<g data-live="hand" data-hand="h" data-pivot="130 130" transform="rotate('+ang('h').toFixed(1)+' 130 130)"><rect x="123" y="52" width="14" height="86" rx="6" fill="#101418"/></g><g data-live="hand" data-hand="m" data-pivot="130 130" transform="rotate('+ang('m').toFixed(1)+' 130 130)"><rect x="124.5" y="26" width="11" height="112" rx="5" fill="#101418"/></g><g data-live="hand" data-hand="s" data-pivot="130 130" transform="rotate('+ang('s').toFixed(1)+' 130 130)"><rect x="128.4" y="30" width="3.2" height="112" fill="#e03131"/></g><circle cx="130" cy="130" r="7" fill="#101418"/></svg>';}
 };
+const ThemeMgr=(()=>{
+function mount(container,theme,data,fitMode){if(!theme)return null;container.innerHTML='';
+const d=Object.assign({},data,{lines:data.lines||(data.line?[data.line]:[]),destinations:data.destinations||(data.destination?[data.destination]:[])});
+const fin=theme.mode==='vehicle'&&d.finished;const W=fin?1280:theme.designWidth,Hh=fin?640:theme.designHeight;
+const fit=document.createElement('div');fit.className='board-fit';const sc=document.createElement('div');sc.className='board-scaler';sc.style.width=W+'px';sc.style.height=Hh+'px';
+sc.innerHTML=fin?H.finish(d):theme.render(d,H);fit.appendChild(sc);container.appendChild(fit);hydrateIcons(sc);
+const handle={root:sc,theme,data:d,container,observer:null,offResize:null,destroy(){if(handle.observer)handle.observer.disconnect();if(handle.offResize)handle.offResize();container.innerHTML='';}};
+function fitNow(){const cs=(container.ownerDocument.defaultView||window).getComputedStyle(container);const px=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);const py=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);const cw=container.clientWidth-px,ch=container.clientHeight-py;if(cw<=0)return;let s;if(fitMode==='contain')s=Math.min(cw/W,(ch>0?ch:1e9)/Hh);else{s=cw/W;container.style.height=Math.round(Hh*s+py)+'px';}s=Math.max(.02,s);fit.style.width=Math.round(W*s)+'px';fit.style.height=Math.round(Hh*s)+'px';sc.style.transform='scale('+s+')';}
+fitNow();const win=container.ownerDocument.defaultView||window;win.addEventListener('resize',fitNow);handle.offResize=()=>win.removeEventListener('resize',fitNow);
+const RO=win.ResizeObserver;if(RO){handle.observer=new RO(fitNow);handle.observer.observe(container);}
+return handle;}
+function activeTheme(){return Themes.get(State.mode==='vehicle'?State.themeVehicle:State.themeStation)||Themes.first(State.mode);}
+return{mount,activeTheme};})();
 const MINI='.mini-badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;padding:0 8px;border-radius:17px;font-size:17px;font-weight:800;margin-right:14px;flex:none}';
 const ALERT='.ab{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;font-size:16px;font-weight:600}.ab .msr{font-size:20px;width:20px;height:20px}.ab-txt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ab.ok{background:rgba(46,204,113,.12);color:#7fdca4}.ab.warn{background:rgba(255,185,92,.14);color:#ffcf8a}.ab.has-alert{background:rgba(255,120,90,.16);color:#ffb4a8}.v1 .ab.ok,.v6 .ab.ok,.vs .ab.ok{background:rgba(31,157,85,.14);color:#157a43}.v1 .ab.warn,.v6 .ab.warn,.vs .ab.warn{background:rgba(224,120,0,.16);color:#9a5b00}.v1 .ab.has-alert,.v6 .ab.has-alert,.vs .ab.has-alert{background:rgba(212,53,28,.14);color:#b3261e}';
 function vSample(line,names,opts){opts=opts||{};return{station:{name:opts.station||'On board',tz:opts.tz||'Europe/Paris'},line,destination:names[names.length-1],trip:{headsign:names[names.length-1],realtime:true},stops:names.map((n,i)=>({index:i,name:n,fixedIn:(i-3)*100+(i===3?-15:0),cancelled:opts.cancelIdx===i,tz:opts.tz||'Europe/Paris',delaySeconds:i===5?120:null})),alerts:opts.alerts||[],meta:{sample:true}};}
@@ -713,6 +743,16 @@ Themes.register({id:'v-visor',mode:'vehicle',name:'AR Visor',description:'Curved
 sample:vSample({key:'vvA',shortName:'A',color:'#38bdf8',textColor:'#04222e',category:'metro',mode:'SUBWAY'},['Portal','Relay','Beacon','Spire','Haven','Summit'],{station:'Visor'}),
 formatStopCd(s,sec){return s.cancelled?'—':sec<-20?'✓':sec<=CONFIG.DUE_S?'Now':U.minutesLeft(sec)+' min';},
 render(data,h){const stops=data.stops||[];const lc=data.line&&data.line.color||'#38bdf8';let ci=stops.findIndex(s=>H.stopState(s)!=='passed');if(ci<0)ci=stops.length;const nx=stops[ci];const prog=Math.min(1,ci/(stops.length||1));const R=120,C=Math.PI*R,off=C*(1-prog);const arc=s=>'<div style="position:absolute;top:50%;transform:translateY(-50%);'+(s==='l'?'left:26px':'right:26px')+';width:150px;height:300px;z-index:4"><svg viewBox="0 0 150 300" style="width:100%;height:100%"><path fill="none" stroke="#152232" stroke-width="10" d="'+(s==='l'?'M130 20 A120 120 0 0 0 130 280':'M20 20 A120 120 0 0 1 20 280')+'"/><path fill="none" stroke="'+lc+'" stroke-width="10" stroke-linecap="round" d="'+(s==='l'?'M130 20 A120 120 0 0 0 130 280':'M20 20 A120 120 0 0 1 20 280')+'" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg></div>';return '<div class="vv" style="--vc:'+lc+'"><div class="vv-grid"></div><div class="vv-horizon"></div><div class="vv-scan"></div><div class="vv-head"><span class="vv-badge">'+h.esc(data.line?data.line.shortName:'—')+'</span><span class="vv-dir">'+h.esc(data.destination||'')+'</span>'+h.clock('vv-clock','hms')+'</div>'+arc('l')+arc('r')+'<div class="vv-card"><div class="k">Next stop</div><div class="n">'+h.esc(nx?nx.name:'End of line')+'</div>'+(nx?'<div class="c" data-live="stop-cd" data-idx="'+nx.index+'"></div>':'')+'<div style="font-size:15px;color:#8fb8d8;margin-top:8px">'+Math.round(prog*100)+'% of journey</div></div><div class="vv-mask"></div><div class="vv-foot">'+h.alertBar(data,'ab')+'</div></div>';}});
+Themes.register({id:'v-gauge',mode:'vehicle',name:'Cockpit Gauge',description:'Analog cockpit arc with a red needle tracking journey progress beside the next-stop readout.',designWidth:1280,designHeight:560,styles:ALERT+'.vg{width:100%;height:100%;display:flex;background:radial-gradient(900px 500px at 30% 0%,#1c2129,#0c0f14);border-radius:16px;overflow:hidden;font-family:var(--font);color:#fff;position:relative}.vg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.02) 0 2px,transparent 2px 8px)}.vg-head{position:absolute;top:0;left:0;right:0;display:flex;gap:16px;align-items:center;padding:20px 32px;z-index:4}.vg-badge{font-size:22px;font-weight:800;background:var(--gc);color:var(--gct);padding:4px 16px;border-radius:8px}.vg-dir{flex:1;font-size:22px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vg-clock{font-size:24px;font-weight:800;color:var(--gc);font-variant-numeric:tabular-nums}.vg-left{width:560px;flex:none;display:flex;align-items:center;justify-content:center;position:relative}.vg-left svg{width:520px;height:300px;overflow:visible}.vg-track{fill:none;stroke:#232a34;stroke-width:22;stroke-linecap:round}.vg-prog{fill:none;stroke:var(--gc);stroke-width:22;stroke-linecap:round;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--gc) 60%,transparent))}.vg-tick{stroke:#3a4450;stroke-width:3}.vg-needle{stroke:#ff5a3c;stroke-width:6;stroke-linecap:round}.vg-hub{fill:#0c0f14;stroke:#ff5a3c;stroke-width:4}.vg-pct{position:absolute;bottom:64px;left:0;right:0;text-align:center;font-size:40px;font-weight:800;color:var(--gc);font-variant-numeric:tabular-nums}.vg-pct small{display:block;font-size:13px;letter-spacing:.2em;color:#8a94a8;text-transform:uppercase;margin-top:2px;font-weight:700}.vg-right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:0 48px;min-width:0}.vg-k{font-size:14px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:#8a94a8}.vg-n{font-size:58px;font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vg-c{font-size:84px;font-weight:800;color:var(--gc);font-variant-numeric:tabular-nums;line-height:1}.vg-c[data-state=next]{color:#7fdca4}.vg-meta{display:flex;gap:26px;font-size:16px;color:#8a94a8;font-weight:600;margin-top:10px;flex-wrap:wrap}.vg-meta b{color:#dfe7ff}.vg-foot{position:absolute;bottom:0;left:0;right:0;padding:12px 30px;z-index:4}.vg-foot .ab{font-size:15px}',
+sample:vSample({key:'vgG',shortName:'G',color:'#f59e0b',textColor:'#241a08',category:'train',mode:'RAIL'},['Union','Market','Garden','Museum','River','Hillcrest','Summit'],{station:'Gauge'}),
+formatStopCd(s,sec){return s.cancelled?'—':sec<-20?'✓':sec<=CONFIG.DUE_S?'Now':U.minutesLeft(sec)+' min';},
+render(data,h){const stops=data.stops||[];const lc=data.line&&data.line.color||'#f59e0b';const ct=data.line&&data.line.textColor||U.contrastText(lc);
+let ci=stops.findIndex(s=>H.stopState(s)!=='passed');if(ci<0)ci=stops.length;const nx=stops[ci];
+const prog=U.clamp(ci/Math.max(1,stops.length-1),0,1);
+const R=200,Cx=260,Cy=250,len=Math.PI*R;
+let ticks='';for(let i=0;i<=8;i++){const a=Math.PI-(i/8)*Math.PI;const x1=Cx+Math.cos(a)*(R-16),y1=Cy-Math.sin(a)*(R-16),x2=Cx+Math.cos(a)*(R-32),y2=Cy-Math.sin(a)*(R-32);ticks+='<line class="vg-tick" x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'"/>';}
+const na=(-90+180*prog).toFixed(1);const eta=nx?h.stopTime(nx,data.station&&data.station.tz):'—';
+return '<div class="vg" style="--gc:'+lc+';--gct:'+ct+'"><div class="vg-head"><span class="vg-badge">'+h.esc(data.line?data.line.shortName:'—')+'</span><span class="vg-dir">→ '+h.esc(data.destination||'')+'</span>'+h.clock('vg-clock','hms')+'</div><div class="vg-left"><svg viewBox="0 0 520 300"><path class="vg-track" d="M60 250 A200 200 0 0 1 460 250"/>'+ticks+'<path class="vg-prog" d="M60 250 A200 200 0 0 1 460 250" stroke-dasharray="'+len.toFixed(1)+'" stroke-dashoffset="'+(len*(1-prog)).toFixed(1)+'"/><g transform="rotate('+na+' 260 250)"><line class="vg-needle" x1="260" y1="250" x2="260" y2="84"/></g><circle class="vg-hub" cx="260" cy="250" r="12"/></svg><div class="vg-pct">'+Math.round(prog*100)+'%<small>journey complete</small></div></div><div class="vg-right"><div class="vg-k">Next stop</div><div class="vg-n">'+h.esc(nx?nx.name:'End of line')+'</div>'+(nx?'<div class="vg-c" data-live="stop-cd" data-idx="'+nx.index+'"></div>':'')+'<div class="vg-meta"><span>Terminus <b>'+h.esc(data.destination||'—')+'</b></span><span>Left <b>'+Math.max(0,stops.length-ci)+'</b></span><span>ETA <b>'+h.esc(eta)+'</b></span></div></div><div class="vg-foot">'+h.alertBar(data,'ab')+'</div></div>';}});
 /* ============ DATA ============ */
 const Data={
 deriveOverview(deps){const cats=new Set(),lm=new Map(),dm=new Map();for(const d of deps){cats.add(d.line.category);if(!lm.has(d.line.key))lm.set(d.line.key,Object.assign({count:0},d.line));lm.get(d.line.key).count++;if(!dm.has(d.line.key))dm.set(d.line.key,new Map());dm.get(d.line.key).set(d.destination,(dm.get(d.line.key).get(d.destination)||0)+1);}State.availableCategories=cats;State.availabilityKnown=deps.length>0;const rank={metro:0,train:1,bus:2};State.lines=[...lm.values()].sort((a,b)=>(rank[a.category]-rank[b.category])||U.naturalCmp(a.shortName,b.shortName));State.destinationsByLine=dm;},
@@ -728,11 +768,36 @@ buildVehicleData(){const t=State.vehicle;if(!t)return null;const now=Date.now();
 vehicleCandidates(){const lk=new Set(State.selectedLineKeys),ds=new Set(State.selectedDestinations),seen=new Set(),out=[];for(const d of State.rawDepartures){if(!lk.has(d.line.key))continue;if(ds.size&&!ds.has(d.destination))continue;if(!d.tripId||seen.has(d.tripId))continue;seen.add(d.tripId);out.push(d);if(out.length>=8)break;}return out;},
 hasExpired(){const now=Date.now();return State.departures.some(d=>d.expectedTime<now-CONFIG.EXPIRE_GRACE_MS);}
 };
+/* ============ TTS (Web Speech API) ============
+   Announces on state changes only: station → top departure change / boarding; vehicle → next-stop change / arriving / journey complete. */
+const TTS={lastKey:'',lastVeh:'',
+supported(){return typeof window!=='undefined'&&'speechSynthesis' in window;},
+cancel(){try{if(this.supported())speechSynthesis.cancel();}catch(e){}},
+reset(){this.lastKey='';this.lastVeh='';},
+pickVoice(lang){if(!lang||!this.supported())return null;try{const vs=speechSynthesis.getVoices()||[];const l=String(lang).toLowerCase();return vs.find(v=>v.lang&&v.lang.toLowerCase()===l)||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(l.slice(0,2)))||null;}catch(e){return null;}},
+speak(text){if(!State.tts.enabled||State.tts.muted||!text||!this.supported())return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text));u.lang=State.tts.lang||'en-US';const v=this.pickVoice(u.lang);if(v)u.voice=v;u.rate=U.clamp(parseFloat(State.tts.rate)||1,.1,10);u.pitch=U.clamp(State.tts.pitch==null?1:parseFloat(State.tts.pitch),0,2);u.volume=U.clamp(State.tts.volume==null?1:parseFloat(State.tts.volume),0,1);speechSynthesis.speak(u);}catch(e){}},
+setEnabled(v){if(v&&!this.supported()){U.toast('Web Speech API is not supported in this browser','warn');return false;}State.tts.enabled=v;if(!v){this.cancel();State.tts.muted=false;}this.reset();Store.save();this.syncFab();return true;},
+toggleMute(){if(!State.tts.enabled)return;State.tts.muted=!State.tts.muted;if(State.tts.muted){this.cancel();this.reset();}Store.save();this.syncFab();U.toast(State.tts.muted?'Announcements muted':'Announcements unmuted');},
+syncFab(){const b=document.getElementById('mute-fab');if(!b)return;b.hidden=!State.tts.enabled;b.classList.toggle('muted',!!State.tts.muted);const ic=b.querySelector('.msr');if(ic){ic.dataset.icon=State.tts.muted?'volume_off':'volume_up';ic.removeAttribute('data-ic');hydrateIcons(b);}},
+depState(d){const s=H.cdSec(d);return d.cancelled?'cancelled':s<=CONFIG.DUE_S?'due':'normal';},
+check(data){if(!State.tts.enabled||State.tts.muted||!data||(data.meta&&data.meta.sample))return;
+if(data.stops){/* vehicle mode */
+if(data.finished){if(this.lastVeh!=='fin'){this.lastVeh='fin';this.speak('Journey complete. Terminus '+(data.destination||'')+'.');}return;}
+const nx=data.stops.find(s=>H.stopState(s)==='next')||data.stops.find(s=>H.stopState(s)==='upcoming');if(!nx)return;
+const due=H.stopState(nx)==='next';const k=nx.index+':'+(due?'due':'next');
+if(this.lastVeh!==k){this.lastVeh=k;this.speak(due?'Arriving at '+nx.name:'Next stop: '+nx.name);}
+}else{/* station mode */
+const f=(data.departures||[])[0];if(!f||f.cancelled){return;}
+const st=this.depState(f);const k=f.uid+':'+st;
+if(this.lastKey!==k){this.lastKey=k;const mins=Math.max(0,Math.ceil(H.cdSec(f)/60));const plat=f.platform?', platform '+f.platform:'';
+this.speak(st==='due'?'Departure to '+f.destination+' is now boarding'+plat:'Next departure to '+f.destination+' in '+mins+' minute'+(mins===1?'':'s')+plat);}}}
+};
 /* ============ PICTURE-IN-PICTURE ============
-   Desktop (Chromium): Document PiP — the real themed board is moved into a floating window.
-   Android / other: Document PiP is unavailable, so we fall back to VIDEO PiP — a canvas is
-   drawn with a compact live board, streamed via captureStream() into a muted <video>, which
-   enters the system PiP window. Works with the user-gesture tap on the PiP button. */
+   Desktop (Chromium): Document PiP — the real themed board is mounted live into the floating window.
+   Android / others: video PiP — the ACTUAL themed board is re-rendered every second into an
+   SVG foreignObject snapshot and drawn onto a canvas streamed into a muted <video> that enters
+   the system PiP window, so PiP shows the same theme as the main screen. A generic canvas
+   layout is kept only as an automatic fallback if serialization fails. */
 const Pip={win:null,handle:null,box:null,vid:null,cvs:null,ctx:null,stream:null,drawTimer:null,active:false,
 fab(){const f=document.getElementById('pip-fab');if(f)f.classList.toggle('is-pip',this.active);},
 onClose(){if(this.drawTimer){clearInterval(this.drawTimer);this.drawTimer=null;}if(this.stream){this.stream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});this.stream=null;}if(this.vid){try{this.vid.pause();}catch(e){}this.vid.remove();this.vid=null;}this.win=null;this.handle=null;this.box=null;this.active=false;this.fab();},
@@ -750,13 +815,28 @@ win.addEventListener('pagehide',()=>this.onClose());
 win.addEventListener('resize',U.debounce(()=>this.mountDoc(),200));
 this.mountDoc();U.toast('Picture-in-Picture opened','success');},
 mountDoc(){if(!this.win||this.win.closed||!this.box)return;if(this.handle){this.handle.destroy();this.handle=null;}const theme=ThemeMgr.activeTheme();if(!theme)return;const data=State.mode==='vehicle'?Data.buildVehicleData():Data.buildStationData();if(!data)return;this.handle=ThemeMgr.mount(this.box,theme,data,'contain');hydrateIcons(this.box);},
-async openVideo(){this.cvs=document.createElement('canvas');this.cvs.width=1280;this.cvs.height=720;this.ctx=this.cvs.getContext('2d');this.drawCanvas();
+async openVideo(){this.cvs=document.createElement('canvas');this.cvs.width=1280;this.cvs.height=720;this.ctx=this.cvs.getContext('2d');this.frame();
 this.stream=this.cvs.captureStream(5);
 const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.srcObject=this.stream;
 v.style.cssText='position:fixed;top:0;left:0;width:2px;height:1px;opacity:.01;pointer-events:none;z-index:-1';document.body.appendChild(v);this.vid=v;
 v.addEventListener('leavepictureinpicture',()=>this.onClose(),{once:true});
 await v.play();await v.requestPictureInPicture();
-this.drawTimer=setInterval(()=>this.drawCanvas(),250);this.active=true;this.fab();U.toast('Picture-in-Picture opened','success');},
+this.drawTimer=setInterval(()=>this.frame(),1000);this.active=true;this.fab();U.toast('Picture-in-Picture opened','success');},
+frame(){if(!this.snapshot())this.drawCanvas();},
+snapshot(){try{const th=ThemeMgr.activeTheme();if(!th||!this.ctx||!State.station)return false;
+const isV=State.mode==='vehicle';const data=isV?Data.buildVehicleData():Data.buildStationData();if(!data)return false;
+const d2=Object.assign({},data,{lines:data.lines||(data.line?[data.line]:[]),destinations:data.destinations||(data.destination?[data.destination]:[])});
+const finished=th.mode==='vehicle'&&d2.finished;
+const W=th.designWidth,Hh=th.designHeight;
+let inner=finished?H.finish(d2):th.render(d2,H);
+const tmp=document.createElement('div');tmp.innerHTML=inner;Display.paint(tmp,th,d2,false);hydrateIcons(tmp);
+const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+Hh+'"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:'+W+'px;height:'+Hh+'px"><style>'+css+'</style>'+tmp.innerHTML+'</div></foreignObject></svg>';
+const img=new Image();const c=this.ctx,cvs=this.cvs,self=this;
+img.onload=()=>{try{c.fillStyle='#0b0f14';c.fillRect(0,0,cvs.width,cvs.height);const s=Math.min(cvs.width/W,cvs.height/Hh);const dw=W*s,dh=Hh*s;c.drawImage(img,(cvs.width-dw)/2,(cvs.height-dh)/2,dw,dh);}catch(e){self.drawCanvas();}};
+img.onerror=()=>this.drawCanvas();
+img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+return true;}catch(e){return false;}},
 trunc(c,t,max){t=String(t||'');if(c.measureText(t).width<=max)return t;let s=t;while(s.length&&c.measureText(s+'…').width>max)s=s.slice(0,-1);return s+'…';},
 drawCanvas(){const c=this.ctx;if(!c)return;const W=1280,Hh=720;const isV=State.mode==='vehicle';
 let accent='#8fdb9b';
@@ -789,11 +869,11 @@ c.fillText(due?'NOW':Math.max(0,Math.ceil(sec/60))+' min',W-48,y+top/2+4);
 c.textAlign='left';y+=top;});},
 drawVeh(c,W,Hh,accent,tz,F){const t=State.vehicle;
 if(!t){c.textAlign='center';c.fillStyle='#8a94a8';c.font='600 38px '+F;c.fillText('Select a vehicle in settings',W/2,Hh/2);c.textAlign='left';return;}
-const now=Date.now();let ci=t.stops.findIndex(s=>s.time!=null&&s.time>now-CFG_DUE());if(ci<0)ci=t.stops.length;const nx=t.stops[ci];
+const now=Date.now();let ci=t.stops.findIndex(s=>s.time!=null&&s.time>now-CFG.DUE_S*1000);if(ci<0)ci=t.stops.length;const nx=t.stops[ci];
 c.textAlign='center';
 c.fillStyle='#8a94a8';c.font='800 24px '+F;c.fillText('NEXT STOP',W/2,170);
 c.fillStyle='#ffffff';c.font='800 76px '+F;c.fillText(this.trunc(c,nx?nx.name:'End of line',W-140),W/2,250);
-const sec=nx&&nx.time!=null?Math.round((nx.time-now)/1000):null;const due=sec!=null&&sec<=CFG.DUE()&&sec>-60;
+const sec=nx&&nx.time!=null?Math.round((nx.time-now)/1000):null;const due=sec!=null&&sec<=CFG.DUE_S&&sec>-60;
 c.fillStyle=due?'#7fdca4':accent;c.font='800 '+(due?90:130)+'px '+F;
 c.fillText(sec==null?'—':(due?'NOW':Math.max(0,Math.ceil(sec/60))+' min'),W/2,420);
 const prog=t.stops.length?U.clamp(ci/t.stops.length,0,1):0;
@@ -801,27 +881,31 @@ c.fillStyle='rgba(255,255,255,.12)';c.fillRect(W/2-300,520,600,14);
 c.fillStyle=accent;c.fillRect(W/2-300,520,600*prog,14);
 c.fillStyle='#8a94a8';c.font='600 28px '+F;
 c.fillText('→ '+this.trunc(c,t.headsign,W-260)+'   ·   '+Math.max(0,t.stops.length-ci)+' stops left',W/2,580);
-c.textAlign='left';}
+c.textAlign='left';},
+closeAll(){try{if(this.win&&!this.win.closed)this.win.close();}catch(e){}this.onClose();}
 };
-function CFG_DUE(){return CONFIG.DUE_S;}
 /* ============ DISPLAY ============ */
-const Display={handle:null,depIndex:new Map(),els:{},lastSig:'',
+const Display={handle:null,els:{},lastSig:'',
 init(){const g=id=>document.getElementById(id);this.els={area:g('board-area'),loading:g('overlay-loading'),error:g('overlay-error'),empty:g('overlay-empty'),vehicle:g('overlay-vehicle'),welcome:g('overlay-welcome'),errorMsg:g('error-msg'),emptyMsg:g('empty-msg'),statusDot:g('status-dot'),statusText:g('status-text'),footer:g('display-footer')};},
 sig(data,theme){if(!data)return 'none';return theme.id+'#'+State.mode+'#'+(data.finished?1:0)+'#'+(data.departures||[]).map(d=>d.uid+':'+d.expectedTime).join('|')+'#'+(data.stops||[]).map(s=>s.index+':'+s.time).join('|');},
-render(){const theme=ThemeMgr.activeTheme();if(!theme)return;const isV=State.mode==='vehicle';const data=isV?Data.buildVehicleData():Data.buildStationData();const sig=this.sig(data,theme);if(this.handle&&sig===this.lastSig){this.tick(true);return;}this.lastSig=sig;if(this.handle){this.handle.destroy();this.handle=null;}this.depIndex=new Map((data&&data.departures||[]).map(d=>[d.uid,d]));if(State.station&&(isV?data:true))this.handle=ThemeMgr.mount(this.els.area,theme,data||Data.buildStationData(),'contain');else this.els.area.innerHTML='';
+paint(root,theme,data,isSample){const tz=data&&data.station?data.station.tz:null;const now=new Date();
+root.querySelectorAll('[data-live="clock"]').forEach(n=>n.textContent=theme.formatClock(now,n.dataset.fmt,tz));
+root.querySelectorAll('[data-live="countdown"]').forEach(n=>{const dep=(data.departures||[]).find(x=>x.uid===n.dataset.uid);if(!dep)return;const sec=isSample&&dep.fixedCountdown!=null?dep.fixedCountdown:Math.round((dep.expectedTime-Date.now())/1000);const tx=theme.formatCountdown(dep,sec,n.dataset.variant||'main');if(n.textContent!==tx)n.textContent=tx;const st=theme.countdownState(dep,sec);if(n.dataset.state!==st)n.dataset.state=st;});
+root.querySelectorAll('[data-live="stop-cd"]').forEach(n=>{const s=data.stops?data.stops[+n.dataset.idx]:null;if(!s)return;const tx=theme.formatStopCd(s,H.stopSec(s));if(n.textContent!==tx)n.textContent=tx;const st=H.stopState(s);if(n.dataset.state!==st)n.dataset.state=st;});
+root.querySelectorAll('[data-live="counter"]').forEach(n=>{const s=data.stops?data.stops[+n.dataset.idx]:null;if(!s)return;const ds=String(Math.min(99,Math.max(0,Math.ceil(H.stopSec(s)/60)))).padStart(2,'0');const dg=n.querySelectorAll('.vc-digit');if(dg[0])dg[0].textContent=ds[0];if(dg[1])dg[1].textContent=ds[1];});
+const hands=root.querySelectorAll('[data-live="hand"]');if(hands.length){const p=U.stationParts(now,tz);hands.forEach(n=>{const hh=n.dataset.hand;const a=hh==='s'?(p.s<58.5?p.s/58.5*360:360):hh==='m'?p.m*6:((p.h%12)+p.m/60)*30;n.setAttribute('transform','rotate('+a.toFixed(1)+' '+(n.dataset.pivot||'130 130')+')');});}},
+render(){const theme=ThemeMgr.activeTheme();if(!theme)return;const isV=State.mode==='vehicle';const data=isV?Data.buildVehicleData():Data.buildStationData();const sig=this.sig(data,theme);if(this.handle&&sig===this.lastSig){this.tick(true);return;}this.lastSig=sig;if(this.handle){this.handle.destroy();this.handle=null;}if(State.station&&(isV?data:true))this.handle=ThemeMgr.mount(this.els.area,theme,data||Data.buildStationData(),'contain');else this.els.area.innerHTML='';
 const sw=!State.station,sl=!!State.station&&(State.overviewLoading&&!State.rawDepartures.length||State.vehicleLoading),se=!!State.station&&!sl&&!!State.departuresError&&(isV?!State.vehicle:!State.departures.length),sem=!!State.station&&!isV&&!sl&&!State.departuresError&&!State.departures.length,sv=!!State.station&&isV&&!sl&&!State.vehicle;
 this.els.welcome.hidden=!sw;this.els.loading.hidden=!sl;this.els.error.hidden=!se;this.els.empty.hidden=!sem;this.els.vehicle.hidden=!sv;
 if(se)this.els.errorMsg.textContent='Transitous says: '+State.departuresError;
 if(sem)this.els.emptyMsg.textContent=!State.selectedLineKeys.length?'No lines on this sign yet.':(State.rawDepartures.length?'No services match soon.':'No upcoming departures right now.');
-this.updateFooter();if(Pip.active&&Pip.win&&!Pip.win.closed)Pip.mountDoc();this.tick(true);},
+this.updateFooter();
+if(Pip.active){if(Pip.win&&!Pip.win.closed)Pip.mountDoc();else if(Pip.vid)Pip.frame();}
+this.tick(true);},
 updateFooter(){const d=this.els.statusDot,t=this.els.statusText;if(!State.station){d.className='status-dot';t.textContent='Not configured';return;}if(State.lastRefreshFailed){d.className='status-dot err';t.textContent='Offline · last '+(State.lastUpdated?U.fmtClock(new Date(State.lastUpdated),'hms',State.station.tz):'—');return;}if(!State.lastUpdated){d.className='status-dot';t.textContent='Waiting…';return;}const isV=State.mode==='vehicle';const rt=isV?(State.vehicle&&State.vehicle.realtime):State.departures.some(x=>x.realtime);d.className='status-dot '+(rt?'live':'sch');t.textContent=(rt?'Live · ':'Sched · ')+(isV?'vehicle':State.selectedLineKeys.length+' lines')+' · '+U.fmtClock(new Date(State.lastUpdated),'hms',State.station.tz);},
-tick(force){const theme=ThemeMgr.activeTheme();if(!theme)return;const tg=[];if(this.handle)tg.push(this.handle);if(Pip.handle)tg.push(Pip.handle);if(Settings.previewHandle&&State.page==='settings')tg.push(Settings.previewHandle);const now=new Date();
-for(const hd of tg){const d=hd.data,smp=d&&d.meta&&d.meta.sample,tz=d&&d.station?d.station.tz:null;
-hd.root.querySelectorAll('[data-live="clock"]').forEach(n=>n.textContent=theme.formatClock(now,n.dataset.fmt,tz));
-hd.root.querySelectorAll('[data-live="countdown"]').forEach(n=>{let dep=this.depIndex.get(n.dataset.uid);if(!dep&&d&&d.departures)dep=d.departures.find(x=>x.uid===n.dataset.uid);if(!dep)return;const sec=smp&&dep.fixedCountdown!=null?dep.fixedCountdown:Math.round((dep.expectedTime-Date.now())/1000);const tx=theme.formatCountdown(dep,sec,n.dataset.variant||'main');if(n.textContent!==tx)n.textContent=tx;const st=theme.countdownState(dep,sec);if(n.dataset.state!==st)n.dataset.state=st;});
-hd.root.querySelectorAll('[data-live="stop-cd"]').forEach(n=>{const s=d&&d.stops?d.stops[+n.dataset.idx]:null;if(!s)return;const tx=theme.formatStopCd(s,H.stopSec(s));if(n.textContent!==tx)n.textContent=tx;const st=H.stopState(s);if(n.dataset.state!==st)n.dataset.state=st;});
-hd.root.querySelectorAll('[data-live="counter"]').forEach(n=>{const s=d&&d.stops?d.stops[+n.dataset.idx]:null;if(!s)return;const ds=String(Math.min(99,Math.max(0,Math.ceil(H.stopSec(s)/60)))).padStart(2,'0');const dg=n.querySelectorAll('.vc-digit');if(dg[0])dg[0].textContent=ds[0];if(dg[1])dg[1].textContent=ds[1];});
-const hands=hd.root.querySelectorAll('[data-live="hand"]');if(hands.length){const p=U.stationParts(now,tz);hands.forEach(n=>{const hh=n.dataset.hand;const a=hh==='s'?(p.s<58.5?p.s/58.5*360:360):hh==='m'?p.m*6:((p.h%12)+p.m/60)*30;n.setAttribute('transform','rotate('+a.toFixed(1)+' '+(n.dataset.pivot||'130 130')+')');});}}
+tick(force){const theme=ThemeMgr.activeTheme();if(!theme)return;const tg=[];if(this.handle)tg.push(this.handle);if(Pip.handle)tg.push(Pip.handle);if(Settings.previewHandle&&State.page==='settings')tg.push(Settings.previewHandle);
+for(const hd of tg){const smp=hd.data&&hd.data.meta&&hd.data.meta.sample;this.paint(hd.root,theme,hd.data,smp);}
+if(this.handle&&this.handle.data&&!(this.handle.data.meta&&this.handle.data.meta.sample))TTS.check(this.handle.data);
 if(!force&&State.page==='display'&&State.mode==='station'&&Data.hasExpired()){Data.applyFilter();this.lastSig='';this.render();}}
 };
 /* ============ SETTINGS ============ */
@@ -875,9 +959,18 @@ g('export-btn').addEventListener('click',()=>{this.els.exportCode.value=Share.en
 g('import-btn').addEventListener('click',()=>{this.els.importCode.value='';Modal.open('import-scrim');});
 g('export-copy').addEventListener('click',()=>Share.copy(this.els.exportCode.value,'Setup code'));
 g('import-apply').addEventListener('click',()=>{const c=Share.decode(this.els.importCode.value);if(!c){U.toast('Invalid setup code','error');return;}Modal.close('import-scrim');App.importConfig(c);});
+/* TTS controls */
+g('tts-sw').addEventListener('click',()=>{if(TTS.setEnabled(!State.tts.enabled)){this.syncTTSUI();U.toast(State.tts.enabled?'Voice announcements on':'Voice announcements off');}});
+g('tts-lang').addEventListener('change',e=>{State.tts.lang=e.target.value.trim()||'en-US';Store.save();});
+const bindRange=(id,key,fmt)=>{const el=g(id),lb=g(id+'-v');const up=()=>{State.tts[key]=parseFloat(el.value);lb.textContent=fmt(el.value);Store.save();};el.addEventListener('input',up);};
+bindRange('tts-rate','rate',v=>parseFloat(v).toFixed(1)+'×');
+bindRange('tts-pitch','pitch',v=>parseFloat(v).toFixed(1));
+bindRange('tts-vol','volume',v=>Math.round(parseFloat(v)*100)+'%');
+g('tts-test').addEventListener('click',()=>{if(!State.tts.enabled){U.toast('Enable announcements first','warn');return;}if(State.tts.muted){U.toast('Unmute first','warn');return;}TTS.speak('Transplay voice test. Next stop: Central. Doors will open on the left.');});
 const rb=g('reset-btn');let armed=false,at=null;
 rb.addEventListener('click',()=>{if(!armed){armed=true;rb.textContent='Confirm?';at=setTimeout(()=>{armed=false;rb.innerHTML='<span class="msr" data-icon="restart_alt"></span>Reset';hydrateIcons(rb);},3000);}else{clearTimeout(at);armed=false;App.reset();}});
-this.renderBg();},
+this.renderBg();this.syncTTSUI();},
+syncTTSUI(){const g=id=>document.getElementById(id);const sw=g('tts-sw');sw.classList.toggle('on',!!State.tts.enabled);sw.setAttribute('aria-checked',String(!!State.tts.enabled));g('tts-cfg').hidden=!State.tts.enabled;g('tts-lang').value=State.tts.lang||'en-US';g('tts-rate').value=State.tts.rate;g('tts-rate-v').textContent=(+State.tts.rate).toFixed(1)+'×';g('tts-pitch').value=State.tts.pitch;g('tts-pitch-v').textContent=(+State.tts.pitch).toFixed(1);g('tts-vol').value=State.tts.volume;g('tts-vol-v').textContent=Math.round((+State.tts.volume)*100)+'%';},
 setTab(t){State.settingsTab=t;document.querySelectorAll('.m3-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));document.getElementById('tab-main').hidden=t!=='main';document.getElementById('tab-themes').hidden=t!=='themes';document.getElementById('tab-infos').hidden=t!=='infos';if(t==='themes')this.renderThemeCards();else this.destroyCards();this.sync();},
 renderModes(){const defs=[['bus','Bus'],['metro','Metro / Tram'],['train','Train']];this.els.modeGrid.innerHTML=defs.map(([c,ti])=>{const av=!State.availabilityKnown||State.availableCategories.has(c);const sel=State.selectedModes.includes(c);const n=State.lines.filter(l=>l.category===c).length;return '<button class="mode-card'+(sel&&av?' selected':'')+(!av?' unavailable':'')+'" data-cat="'+c+'"><span class="mc-check"><span class="msr" data-icon="check"></span></span><span class="mc-icon">'+U.modeIcon(c)+'</span><span class="mc-title">'+ti+'</span><span class="mc-status">'+(!State.station?'Select station':!State.availabilityKnown?'Unknown':av?n+' lines':'N/A')+'</span></button>';}).join('');hydrateIcons(this.els.modeGrid);this.els.modeGrid.querySelectorAll('.mode-card:not(.unavailable)').forEach(c=>c.addEventListener('click',()=>App.toggleMode(c.dataset.cat)));},
 renderLineChips(){const k=State.selectedLineKeys,v=State.mode==='vehicle';this.els.lineCount.textContent=v?(k.length?'1 line':'none'):k.length+' selected';this.els.lineEmpty.hidden=k.length>0||!State.station;this.els.lineNote.textContent=v?'Vehicle mode: single line — tap card to change.':'Multi-select merges lines on one sign.';
@@ -895,9 +988,9 @@ renderBg(){this.els.bgHexPill.textContent=State.bg.toUpperCase();this.els.bgSwat
 renderThemeCards(){this.destroyCards();const th=Themes.list(State.mode);this.els.themesIntro.textContent=(State.mode==='vehicle'?'Vehicle':'Station')+' themes — previews use sample data.';this.els.themesGrid.innerHTML=th.map(t=>'<button class="theme-card'+((State.mode==='vehicle'?State.themeVehicle:State.themeStation)===t.id?' selected':'')+'" data-theme="'+t.id+'"><div class="theme-card-preview" data-preview="'+t.id+'"><span class="sample-tag">SAMPLE</span></div><div class="theme-card-body"><div class="theme-card-name">'+U.esc(t.name)+'<span class="active-pill">ACTIVE</span></div><div class="theme-card-desc">'+U.esc(t.description)+'</div></div></button>').join('');th.forEach(t=>{const holder=this.els.themesGrid.querySelector('[data-preview="'+CSS.escape(t.id)+'"]');const handle=ThemeMgr.mount(holder,t,t.sample||{station:{name:'S'},line:null,departures:[],stops:[],alerts:[],meta:{sample:true}},'width');if(handle)this.cardHandles.push(handle);});this.els.themesGrid.querySelectorAll('.theme-card').forEach(c=>c.addEventListener('click',()=>App.setTheme(c.dataset.theme)));},
 destroyCards(){this.cardHandles.forEach(h=>h.destroy());this.cardHandles=[];},
 renderPreview(){const theme=ThemeMgr.activeTheme();if(!theme)return;const v=State.mode==='vehicle';let data,live=false;if(v){if(State.vehicle){data=Data.buildVehicleData();live=true;}else data=theme.sample;}else{if(State.rawDepartures.length){data=Data.buildStationData();live=true;}else data=theme.sample;}data=data||theme.sample;const sig=Display.sig(data,theme)+'#'+live;if(this.previewHandle&&sig===this.previewSig)return;this.previewSig=sig;if(this.previewHandle){this.previewHandle.destroy();this.previewHandle=null;}this.previewHandle=ThemeMgr.mount(this.els.preview,theme,data,'width');const tag=document.createElement('span');tag.className='preview-live '+(live?'on':'off');tag.innerHTML=live?'<i></i>LIVE':'SAMPLE';this.els.preview.appendChild(tag);this.els.previewCaption.textContent=(v?'Vehicle':'Station')+' · '+(live?'live':'sample');this.els.previewThemeName.textContent=theme.name;},
-renderChangelog(){const E=[['v10.1','Current',1,['Picture-in-Picture button beside fullscreen','PiP on Android via video-PiP fallback (canvas board stream)','Open Graph / Twitter metadata + inline SVG favicon']],['v10','Earlier',1,['Setup transfer (Export/Import, ?code=)','3 station themes: Receipt Roll, Ambient Sky, Brutal Index','3 vehicle themes: Door Indicator, Rolling Counter, Constellation','3 futuristic station themes: Holo Deck, Orbit Dial, Data Rain','3 futuristic vehicle themes: Warp Corridor, Synapse Hex, AR Visor','Journey-complete screen for vehicle themes','Wake-lock + reconnect refresh','Burn-in protection','Ilévia fixes, proportional arrows','Single-choice vehicle selectors','Perf: skip redundant re-renders','Self-contained build: inline SVG icons, no CDN fonts']],['v9','Earlier',0,['Ilévia rebuilt, Vertical Strip & Journey Ring','Scroll-safe search, GitHub button, tap-to-reveal status']],['v8','Earlier',0,['Infos tab, Credits & Changelog pop-ups','Android scroll fix, identified API requests, 60 s cadence']],['v7','Earlier',0,['Darker backdrop, vehicle single line+dest, live preview']],['v6','Earlier',0,['Vehicle mode + themes, Material 3, backdrop picker']],['v5','Earlier',0,['Click-to-open picker, typed icons, fullscreen']],['v4','Earlier',0,['Multi-select lines & destinations']],['v3','Earlier',0,['5 new themes, all-English']],['v2','Earlier',0,['Responsive portrait/landscape']],['v1','Initial',0,['Transitous MOTIS 2 live departures, 4 themes']]];
+renderChangelog(){const E=[['v11','Current',1,['Themed Picture-in-Picture — Android video PiP now mirrors the real theme (board snapshots)','Web Speech voice announcements for both modes, configurable (language, speed, pitch, volume)','Quick mute button beside fullscreen (hidden when announcements are off)','New vehicle theme: Cockpit Gauge']],['v10.1','Earlier',1,['Picture-in-Picture button beside fullscreen','Open Graph / Twitter metadata + inline SVG favicon']],['v10','Earlier',1,['Setup transfer (Export/Import, ?code=)','3 station themes: Receipt Roll, Ambient Sky, Brutal Index','3 vehicle themes: Door Indicator, Rolling Counter, Constellation','3 futuristic station themes: Holo Deck, Orbit Dial, Data Rain','3 futuristic vehicle themes: Warp Corridor, Synapse Hex, AR Visor','Journey-complete screen for vehicle themes','Wake-lock + reconnect refresh','Burn-in protection','Ilévia fixes, proportional arrows','Single-choice vehicle selectors','Perf: skip redundant re-renders','Self-contained build: inline SVG icons, no CDN fonts']],['v9','Earlier',0,['Ilévia rebuilt, Vertical Strip & Journey Ring','Scroll-safe search, GitHub button, tap-to-reveal status']],['v8','Earlier',0,['Infos tab, Credits & Changelog pop-ups','Android scroll fix, identified API requests, 60 s cadence']],['v7','Earlier',0,['Darker backdrop, vehicle single line+dest, live preview']],['v6','Earlier',0,['Vehicle mode + themes, Material 3, backdrop picker']],['v5','Earlier',0,['Click-to-open picker, typed icons, fullscreen']],['v4','Earlier',0,['Multi-select lines & destinations']],['v3','Earlier',0,['5 new themes, all-English']],['v2','Earlier',0,['Responsive portrait/landscape']],['v1','Initial',0,['Transitous MOTIS 2 live departures, 4 themes']]];
 document.getElementById('changelog-body').innerHTML=E.map(([v,d,l,items])=>'<div class="cl-entry'+(l?' latest':'')+'"><div class="cl-head"><span class="cl-ver">'+v+'</span><span class="cl-date">'+d+'</span>'+(l?'<span class="cl-tag new">New</span>':'')+'</div><div class="cl-items">'+items.map(i=>'<div class="cl-item">'+i+'</div>').join('')+'</div></div>').join('');},
-sync(){if(State.page!=='settings')return;document.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('active',b.dataset.mode===State.mode));if(State.station){this.els.chip.hidden=false;this.els.scName.textContent=State.station.name;this.els.scId.textContent=State.station.id;}else this.els.chip.hidden=true;this.renderModes();this.renderLineChips();this.renderDestList();this.renderVehicle();this.lineBox.setDisabled(!State.station||!State.lines.length);this.lineBox.input.placeholder=State.mode==='vehicle'?(State.selectedLineKeys.length?'Line selected — tap to change':'Search and pick a line'):'Search and tick lines…';this.lineBox.requery();if(State.settingsTab==='themes')this.els.themesGrid.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('selected',c.dataset.theme===(State.mode==='vehicle'?State.themeVehicle:State.themeStation)));this.renderPreview();}
+sync(){if(State.page!=='settings')return;document.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('active',b.dataset.mode===State.mode));if(State.station){this.els.chip.hidden=false;this.els.scName.textContent=State.station.name;this.els.scId.textContent=State.station.id;}else this.els.chip.hidden=true;this.renderModes();this.renderLineChips();this.renderDestList();this.renderVehicle();this.syncTTSUI();this.lineBox.setDisabled(!State.station||!State.lines.length);this.lineBox.input.placeholder=State.mode==='vehicle'?(State.selectedLineKeys.length?'Line selected — tap to change':'Search and pick a line'):'Search and tick lines…';this.lineBox.requery();if(State.settingsTab==='themes')this.els.themesGrid.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('selected',c.dataset.theme===(State.mode==='vehicle'?State.themeVehicle:State.themeStation)));this.renderPreview();}
 };
 const Modal={init(){['credits-scrim','changelog-scrim','export-scrim','import-scrim'].forEach(id=>{const s=document.getElementById(id);s.addEventListener('click',e=>{if(e.target===s)this.close(id);});});['credits-close','changelog-close','export-close','import-close'].forEach(id=>document.getElementById(id).addEventListener('click',()=>this.close(id.replace('-close','-scrim'))));},open(id){document.getElementById(id).classList.add('open');},close(id){document.getElementById(id).classList.remove('open');},closeAll(){['credits-scrim','changelog-scrim','export-scrim','import-scrim'].forEach(i=>this.close(i));}};
 const Dialog={els:{},token:0,init(){this.els={scrim:document.getElementById('dialog-scrim'),body:document.getElementById('dialog-body'),sub:document.getElementById('dialog-sub')};document.getElementById('dialog-close').addEventListener('click',()=>this.close());this.els.scrim.addEventListener('click',e=>{if(e.target===this.els.scrim)this.close();});},
@@ -907,11 +1000,12 @@ html+='<button class="v-cand" data-trip="'+U.esc(x.tripId)+'"><span class="line-
 this.els.body.innerHTML=html||'<div class="dialog-empty">No vehicles found.</div>';hydrateIcons(this.els.body);this.els.body.querySelectorAll('.v-cand').forEach(b=>b.addEventListener('click',()=>{App.setVehicle(b.dataset.trip);this.close();}));},
 close(){this.token++;this.els.scrim.classList.remove('open');}};
 const Wake={s:null,async acq(){try{if('wakeLock' in navigator&&!this.s&&document.visibilityState==='visible'){this.s=await navigator.wakeLock.request('screen');this.s.addEventListener('release',()=>this.s=null);}}catch(e){this.s=null;}},rel(){try{if(this.s){this.s.release();this.s=null;}}catch(e){}},init(){this.acq();document.addEventListener('visibilitychange',()=>document.visibilityState==='visible'?this.acq():this.rel());}};
-const Nav={fabTimer:null,init(){const cl=document.getElementById('fab-cluster'),fs=document.getElementById('fullscreen-fab'),pip=document.getElementById('pip-fab'),st=document.getElementById('settings-fab'),dp=document.getElementById('display-screen'),se=document.getElementById('settings-screen'),ft=document.getElementById('display-footer');this.cl=cl;this.fs=fs;this.ft=ft;if('inert' in se)se.inert=true;
+const Nav={fabTimer:null,init(){const cl=document.getElementById('fab-cluster'),fs=document.getElementById('fullscreen-fab'),pip=document.getElementById('pip-fab'),mf=document.getElementById('mute-fab'),st=document.getElementById('settings-fab'),dp=document.getElementById('display-screen'),se=document.getElementById('settings-screen'),ft=document.getElementById('display-footer');this.cl=cl;this.fs=fs;this.ft=ft;this.mf=mf;if('inert' in se)se.inert=true;
 document.getElementById('back-btn').addEventListener('click',()=>this.show('display'));
 st.addEventListener('click',e=>{e.stopPropagation();this.show('settings');});
 fs.addEventListener('click',e=>{e.stopPropagation();this.toggleFullscreen();});
 pip.addEventListener('click',e=>{e.stopPropagation();Pip.toggle();this.reveal();});
+mf.addEventListener('click',e=>{e.stopPropagation();TTS.toggleMute();this.reveal();});
 dp.addEventListener('pointerdown',e=>{if(e.target.closest('a,button'))return;this.reveal();});
 document.getElementById('attribution-link').addEventListener('pointerdown',e=>e.stopPropagation());
 ['welcome-settings-btn','error-settings-btn','empty-settings-btn','vehicle-settings-btn'].forEach(id=>document.getElementById(id).addEventListener('click',()=>this.show('settings')));
@@ -921,20 +1015,21 @@ const onFs=()=>{fs.classList.toggle('is-fs',!!(document.fullscreenElement||docum
 document.addEventListener('fullscreenchange',onFs);document.addEventListener('webkitfullscreenchange',onFs);
 window.addEventListener('online',()=>{U.toast('Connection restored — refreshing','success');State.lastRefreshFailed=false;App.refreshNow();});
 window.addEventListener('offline',()=>{State.lastRefreshFailed=true;Display.updateFooter();U.toast('Connection lost — will refresh when back','warn');});
+window.addEventListener('pagehide',()=>TTS.cancel());
 try{if(!localStorage.getItem(CONFIG.HINT_KEY)){this.hint(dp,'Tap the display to reveal PiP, fullscreen, settings & status');localStorage.setItem(CONFIG.HINT_KEY,'1');}}catch(e){}},
 hint(p,t){const el=document.createElement('div');el.className='transient-hint';el.textContent=t;p.appendChild(el);setTimeout(()=>el.remove(),6200);},
-reveal(){this.cl.classList.add('revealed');this.ft.classList.add('revealed');this.fs.tabIndex=0;document.getElementById('pip-fab').tabIndex=0;clearTimeout(this.fabTimer);this.fabTimer=setTimeout(()=>this.hide(),CONFIG.FAB_HIDE_MS);},
-hide(){this.cl.classList.remove('revealed');this.ft.classList.remove('revealed');this.fs.tabIndex=-1;document.getElementById('pip-fab').tabIndex=-1;},
+reveal(){this.cl.classList.add('revealed');this.ft.classList.add('revealed');this.fs.tabIndex=0;document.getElementById('pip-fab').tabIndex=0;if(this.mf)this.mf.tabIndex=this.mf.hidden?-1:0;clearTimeout(this.fabTimer);this.fabTimer=setTimeout(()=>this.hide(),CONFIG.FAB_HIDE_MS);},
+hide(){this.cl.classList.remove('revealed');this.ft.classList.remove('revealed');this.fs.tabIndex=-1;document.getElementById('pip-fab').tabIndex=-1;if(this.mf)this.mf.tabIndex=-1;},
 async toggleFullscreen(){const el=document.documentElement;try{if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else if(el.requestFullscreen)await el.requestFullscreen({navigationUI:'hide'});else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();else{U.toast('Fullscreen not supported','warn');this.reveal();return;}}catch(e){U.toast('Fullscreen blocked','warn');}this.reveal();},
 show(p){State.page=p;const se=document.getElementById('settings-screen');if(p==='settings'){se.classList.add('open');se.setAttribute('aria-hidden','false');if('inert' in se)se.inert=false;this.hide();clearTimeout(this.fabTimer);se.scrollTop=0;Settings.sync();if(State.settingsTab==='themes')Settings.renderThemeCards();}else{se.classList.remove('open');se.setAttribute('aria-hidden','true');if('inert' in se)se.inert=true;Settings.destroyCards();Settings.previewSig='';Display.lastSig='';Display.render();}}};
 const App={
 ensureSelections(auto){const av=[...State.availableCategories];if(State.availabilityKnown&&av.length){const k=State.selectedModes.filter(m=>av.includes(m));State.selectedModes=k.length?k:av.slice();}const pool=State.lines.filter(l=>State.selectedModes.includes(l.category));State.selectedLineKeys=State.selectedLineKeys.filter(k=>pool.some(l=>l.key===k));if(State.mode==='vehicle'&&State.selectedLineKeys.length>1)State.selectedLineKeys=[State.selectedLineKeys[0]];if(auto&&!State.selectedLineKeys.length&&pool.length)State.selectedLineKeys=[pool[0].key];const un=Data.unionDestinations();State.selectedDestinations=State.selectedDestinations.filter(d=>un.has(d));if(State.mode==='vehicle'){if(State.selectedDestinations.length>1)State.selectedDestinations=[State.selectedDestinations[0]];if(!State.selectedDestinations.length&&un.size)State.selectedDestinations=[[...un].sort(U.naturalCmp)[0]];}},
 commit(){Data.applyFilter();Store.save();Display.lastSig='';Display.render();Settings.sync();},
 refreshNow(){State.mode==='vehicle'&&State.vehicleTripId?Data.refreshTrip():Data.refresh(true);},
-importConfig(c){Store.apply(c);if(!Themes.has(State.themeStation))State.themeStation='ratp-modern';if(!Themes.has(State.themeVehicle))State.themeVehicle='v-ilevia';State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicle=null;document.documentElement.style.setProperty('--stage-bg',State.bg);if(Settings.lineBox)Settings.lineBox.clear();Store.save();Settings.previewSig='';Display.lastSig='';U.toast('Setup imported','success');Data.loadOverview();if(State.mode==='vehicle'&&State.vehicleTripId)Data.loadTrip(State.vehicleTripId);Settings.sync();},
-setMode(m){if(State.mode===m)return;State.mode=m;if(m==='vehicle'){if(State.selectedLineKeys.length>1)State.selectedLineKeys=[State.selectedLineKeys[0]];State.vehicleTripId=null;State.vehicle=null;this.ensureSelections(true);}Store.save();Display.lastSig='';Display.render();Settings.sync();U.toast(m==='vehicle'?'Vehicle mode — single line & destination':'Station mode','success');},
+importConfig(c){Store.apply(c);if(!Themes.has(State.themeStation))State.themeStation='ratp-modern';if(!Themes.has(State.themeVehicle))State.themeVehicle='v-ilevia';State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicle=null;document.documentElement.style.setProperty('--stage-bg',State.bg);if(Settings.lineBox)Settings.lineBox.clear();Store.save();Settings.previewSig='';Display.lastSig='';TTS.reset();TTS.syncFab();U.toast('Setup imported','success');Data.loadOverview();if(State.mode==='vehicle'&&State.vehicleTripId)Data.loadTrip(State.vehicleTripId);Settings.sync();},
+setMode(m){if(State.mode===m)return;State.mode=m;if(m==='vehicle'){if(State.selectedLineKeys.length>1)State.selectedLineKeys=[State.selectedLineKeys[0]];State.vehicleTripId=null;State.vehicle=null;this.ensureSelections(true);}TTS.reset();Store.save();Display.lastSig='';Display.render();Settings.sync();U.toast(m==='vehicle'?'Vehicle mode — single line & destination':'Station mode','success');},
 setBg(c){State.bg=c;document.documentElement.style.setProperty('--stage-bg',c);Store.save();Settings.renderBg();if(Pip.win&&!Pip.win.closed)Pip.win.document.body.style.background=c;},
-setStation(st){State.station=st;State.selectedLineKeys=[];State.selectedDestinations=[];State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicleTripId=null;State.vehicle=null;if(Settings.lineBox)Settings.lineBox.clear();Store.save();Display.lastSig='';U.toast('Station: '+st.name,'success');Data.loadOverview();},
+setStation(st){State.station=st;State.selectedLineKeys=[];State.selectedDestinations=[];State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicleTripId=null;State.vehicle=null;if(Settings.lineBox)Settings.lineBox.clear();TTS.reset();Store.save();Display.lastSig='';U.toast('Station: '+st.name,'success');Data.loadOverview();},
 toggleMode(c){const i=State.selectedModes.indexOf(c);if(i>=0){if(State.selectedModes.length===1){U.toast('Keep one type','warn');return;}State.selectedModes.splice(i,1);}else State.selectedModes.push(c);this.ensureSelections(true);this.commit();},
 toggleLine(k){if(State.mode==='vehicle'){State.selectedLineKeys=[k];State.selectedDestinations=[];State.vehicleTripId=null;State.vehicle=null;this.ensureSelections(false);}else{const i=State.selectedLineKeys.indexOf(k);i>=0?State.selectedLineKeys.splice(i,1):State.selectedLineKeys.push(k);this.ensureSelections(false);}this.commit();},
 addLines(ks){const s=new Set(State.selectedLineKeys);ks.forEach(k=>s.add(k));State.selectedLineKeys=[...s];this.ensureSelections(false);this.commit();},
@@ -942,18 +1037,20 @@ clearLines(){State.selectedLineKeys=[];State.selectedDestinations=[];State.vehic
 toggleDestination(d){if(State.mode==='vehicle'){State.selectedDestinations=[d];State.vehicleTripId=null;State.vehicle=null;}else{const i=State.selectedDestinations.indexOf(d);i>=0?State.selectedDestinations.splice(i,1):State.selectedDestinations.push(d);}this.commit();},
 setAllDestinations(){State.selectedDestinations=[];this.commit();},
 setTheme(id){if(!Themes.has(id))return;State.mode==='vehicle'?State.themeVehicle=id:State.themeStation=id;Store.save();Display.lastSig='';Display.render();Settings.sync();U.toast('Theme: '+Themes.get(id).name,'success');},
-setVehicle(id){State.vehicleTripId=id;Store.save();Display.lastSig='';Data.loadTrip(id);U.toast('Following vehicle…','success');},
+setVehicle(id){State.vehicleTripId=id;TTS.reset();Store.save();Display.lastSig='';Data.loadTrip(id);U.toast('Following vehicle…','success');},
 retry(){State.departuresError=null;State.mode==='vehicle'&&State.vehicleTripId?Data.loadTrip(State.vehicleTripId):(State.rawDepartures.length?Data.refresh(false):Data.loadOverview());},
-reset(){Store.reset();State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicle=null;document.documentElement.style.setProperty('--stage-bg',State.bg);if(Settings.lineBox)Settings.lineBox.clear();Store.save();Display.lastSig='';U.toast('Reset to defaults','success');Data.loadOverview();}
+reset(){Store.reset();State.rawDepartures=[];State.departures=[];State.lines=[];State.destinationsByLine=new Map();State.availableCategories=new Set();State.availabilityKnown=false;State.departuresError=null;State.vehicle=null;document.documentElement.style.setProperty('--stage-bg',State.bg);if(Settings.lineBox)Settings.lineBox.clear();TTS.reset();TTS.syncFab();Store.save();Settings.syncTTSUI();Display.lastSig='';U.toast('Reset to defaults','success');Data.loadOverview();}
 };
 (function boot(){
 hydrateIcons(document);
-Display.init();Settings.init();Modal.init();Dialog.init();Nav.init();Wake.init();
+Display.init();Settings.init();Modal.init();Dialog.init();Nav.init();Wake.init();TTS.syncFab();
+if(TTS.supported()&&speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.addEventListener('voiceschanged',()=>{}, {once:true});
 const imported=Share.applyFromUrl();const restored=Store.restore();if(imported)Store.save();
 if(!restored&&!imported&&!State.station)State.station={...CONFIG.DEFAULT_STATION};
 if(!Themes.has(State.themeStation))State.themeStation='ratp-modern';
 if(!Themes.has(State.themeVehicle))State.themeVehicle='v-ilevia';
 document.documentElement.style.setProperty('--stage-bg',State.bg);
+TTS.syncFab();
 Display.render();
 setInterval(()=>Display.tick(false),CONFIG.TICK_MS);
 setInterval(()=>{if(!document.hidden)App.refreshNow();},CONFIG.REFRESH_MS);
