@@ -40,6 +40,9 @@ All *on vehicule* themes | e.g. Paris BUS Theme
 
 *Only at major theme updates the images will change*
 
+## Changelog
+Available at [Discussions/Updates](https://github.com/TeomanOFF/Transplay/discussions/categories/updates)
+
 ## Attributions :
 
 Transport data by *Transitous*:
